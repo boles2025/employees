@@ -82,17 +82,8 @@
             }
         }
 
-        /* تأكيد ظهور تبويب الملاحظات اليومية عند الطباعة وإخفاء بقية التبويبات */
-        @media print {
-            #adm6 {
-                display: block !important;
-                visibility: visible !important;
-            }
-            /* إخفاء جميع التبويبات الأخرى أثناء الطباعة لتوضيح التقرير */
-            .admin-tab:not(#adm6) {
-                display: none !important;
-            }
-        }
+        /* عند الطباعة لا يتم إجبار عرض تبويب معين بل يتم طباعة المحتوى الظاهر حالياً. */
+        /* تمت إزالة القواعد التي كانت تحصر الطباعة في تبويب الملاحظات اليومية (#adm6) لإتاحة طباعة الجدول العام وبقية التبويبات. */
 
         /* ضبط مظهر حاوية التحكم في اللون داخل شريط الإدارة */
         #adminDashboardView .admin-sidebar > .p-3 {
@@ -240,6 +231,8 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            /* تصغير حجم الخط داخل بطاقات الطلبات لتبدو أكثر أناقة */
+            font-size: 0.9rem;
         }
         
         .request-card::after {
@@ -261,6 +254,40 @@
         .request-card:hover {
             transform: translateY(-7px) scale(1.01);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* تخصيص شكل التوست (الإشعارات العائمة) ليكون بيضاوي وصغير مع ألوان جذابة */
+        .custom-toast {
+            /*
+             * تضبيط شكل التوستات العائمة لتكون صغيرة وبيضاوية مع ألوان جذابة.
+             * زيادة نصف القطر يجعل الزوايا أكثر نعومة بينما يقلل حجم الخط والمسافات
+             * بحيث تبدو التوستات كأشرطة تنبيهية رشيقة. يتم ضبط المحاذاة بحيث يظهر
+             * الأيقونة والنص بشكل متناسق.
+             */
+            border-radius: 30px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.80rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--hover-shadow);
+        }
+        /* إضافة حدود ملونة حسب نوع الإشعار */
+        .custom-toast.swal2-success {
+            border-left: 5px solid var(--primary);
+        }
+        .custom-toast.swal2-error {
+            border-left: 5px solid var(--accent);
+        }
+        .custom-toast.swal2-info {
+            border-left: 5px solid var(--secondary);
+        }
+        .custom-toast .swal2-title {
+            margin: 0;
+            flex: 1;
+        }
+        .custom-toast .swal2-icon {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
         }
         
         .status-pending {
@@ -721,7 +748,15 @@
         
         .schedule-table {
             width: 100%;
-            min-width: 700px; /* تقليل العرض الأدنى لتتسع في الشاشات الصغيرة */
+            /* تقليل العرض الأدنى ليتوافق الجدول مع الشاشات الصغيرة والهواتف المحمولة */
+            min-width: 550px;
+        }
+
+        /* تصغير حجم الخلايا والنصوص داخل جدول الموظف لضمان ظهور جميع الأعمدة على الأجهزة الصغيرة */
+        .schedule-table th,
+        .schedule-table td {
+            white-space: nowrap;
+            font-size: 13px;
         }
         
         .schedule-table th:nth-child(1),
@@ -880,7 +915,8 @@
                     <button class="btn btn-primary px-4" onclick="searchEmployee()"><i class="fas fa-search me-2"></i>بحث</button>
                 </div>
                 <div class="mt-3">
-                    <button class="btn btn-outline-primary btn-sm" onclick="showHelp()"><i class="fas fa-question-circle me-1"></i>كيفية استخدام النظام</button>
+                    <!-- تم تغيير نص الزر ليصبح "تعليمات هامة" بدلاً من "كيفية استخدام النظام" -->
+                    <button class="btn btn-outline-primary btn-sm" onclick="showHelp()"><i class="fas fa-question-circle me-1"></i>تعليمات هامة</button>
                 </div>
 
                 <!-- تعليمات للمستخدم تُعرض في الصفحة الرئيسية بدلاً من ظهورها بعد البحث بالرقم القومي -->
@@ -1012,15 +1048,22 @@
                                 <h5 class="fw-bold border-bottom pb-3 mb-4"><i class="fas fa-users me-2"></i>إدارة الموظفين</h5>
                                 
                                 <div class="row g-3 mb-4 p-3 bg-light rounded">
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <label class="form-label fw-bold">اسم الموظف</label>
                                         <input type="text" id="aName" class="form-control" placeholder="أدخل الاسم الكامل">
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label fw-bold">الرقم القومي</label>
                                         <input type="text" id="aId" class="form-control" placeholder="14 رقم">
                                     </div>
-                                    <div class="col-md-3 d-flex align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">عضو هيئة تدريس؟</label>
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" id="aIsFaculty">
+                                            <label class="form-check-label" for="aIsFaculty">نعم</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
                                         <button class="btn btn-success w-100 py-2" onclick="addManualEmployee()"><i class="fas fa-user-plus me-2"></i>إضافة</button>
                                     </div>
                                 </div>
@@ -1064,6 +1107,14 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <!-- قسم التبديلات اليدوية للسماح للمسؤول بإنشاء وتعديل التبديلات مباشرة -->
+                            <div class="main-card mt-3">
+                                <h6 class="fw-bold mb-3"><i class="fas fa-handshake text-info me-2"></i>التبديلات اليدوية</h6>
+                                <div class="mb-2">
+                                    <button class="btn btn-primary btn-sm" onclick="window.showManualSwapModal()"><i class="fas fa-plus me-1"></i> إضافة تبديل يدوي</button>
+                                </div>
+                                <div id="manualSwapsList" style="max-height: 400px; overflow-y: auto;"></div>
                             </div>
                         </div>
 
@@ -1251,11 +1302,18 @@
         };
 
         let db, auth, currentEmpData, allEmployees = [], allDates = [], statsChart, firebaseInitialized = false;
+        // مصفوفة لتخزين التبديلات اليدوية التي يقوم بها المسؤول. يتم تحميلها من التخزين المحلي أو Firebase عند التهيئة.
+        let manualSwaps = [];
 
         async function init() {
             try {
                 console.log('🚀 جاري تهيئة النظام...');
                 
+                // تحميل التبديلات اليدوية من التخزين المحلي قبل بدء أي عمليات
+                if (typeof loadManualSwaps === 'function') {
+                    manualSwaps = loadManualSwaps();
+                }
+
                 setTimeout(() => {
                     const loadingOverlay = document.getElementById('loadingOverlay');
                     if(loadingOverlay && loadingOverlay.style.display !== 'none') {
@@ -1332,6 +1390,10 @@
                         if (typeof syncInstructionsFromFirebase === 'function') {
                             await syncInstructionsFromFirebase();
                         }
+                        // مزامنة التبديلات اليدوية من Firebase إلى التخزين المحلي
+                        if (typeof syncManualSwapsFromFirebase === 'function') {
+                            await syncManualSwapsFromFirebase();
+                        }
                         
                     } catch (firestoreError) {
                         console.error('❌ خطأ في اتصال Firestore:', firestoreError);
@@ -1387,6 +1449,7 @@
                             id: doc.id,
                             nationalId: doc.id,
                             name: data.name || 'غير معروف',
+                            isFaculty: data.isFaculty || false,
                             schedule: data.schedule || [],
                             pendingSwaps: data.pendingSwaps || [],
                             notifications: data.notifications || [],
@@ -1559,6 +1622,8 @@ service cloud.firestore {
                     const empData = {
                         name: emp.name,
                         nationalId: emp.nationalId,
+                        // حفظ حالة العضوية في هيئة التدريس لاسترجاعها لاحقاً
+                        isFaculty: emp.isFaculty || false,
                         schedule: emp.schedule || [],
                         pendingSwaps: emp.pendingSwaps || [],
                         notifications: emp.notifications || [],
@@ -1716,6 +1781,43 @@ service cloud.firestore {
             }
         }
 
+        /**
+         * تحديد جنس الموظف بناءً على الرقم القومي المصري.
+         * في الرقم القومي المصري، الرقم الثالث عشر (المؤشر 12 في السلسلة) يحدد الجنس:
+         * الأرقام الفردية تشير إلى ذكر، والأرقام الزوجية تشير إلى أنثى.
+         * @param {string} nid الرقم القومي (14 رقم)
+         * @returns {string} 'male' أو 'female'
+         */
+        function getGenderFromNationalId(nid) {
+            try {
+                if (!nid || nid.length < 13) return 'male';
+                const digit = parseInt(nid.charAt(12));
+                if (isNaN(digit)) return 'male';
+                return (digit % 2 === 0) ? 'female' : 'male';
+            } catch (e) {
+                return 'male';
+            }
+        }
+
+        /**
+         * إرجاع اسم الموظف مرفقاً باللقب المناسب وفق الجنس وعضوية هيئة التدريس.
+         * إذا كان الموظف عضو هيئة تدريس، يتم إلحاق "أستاذ دكتور" قبل الاسم.
+         * إذا لم يكن عضواً بهيئة التدريس، يتم استخدام "أستاذ" للذكر و "أستاذة" للأنثى.
+         * @param {object} emp كائن الموظف يحتوي على name و nationalId و isFaculty
+         * @returns {string} الاسم مع اللقب الملائم
+         */
+        function getNameWithPrefix(emp) {
+            if (!emp) return '';
+            const gender = getGenderFromNationalId(emp.nationalId || '');
+            if (emp.isFaculty) {
+                return `أستاذ دكتور ${emp.name}`;
+            }
+            if (gender === 'female') {
+                return `أستاذة ${emp.name}`;
+            }
+            return `أستاذ ${emp.name}`;
+        }
+
         function searchEmployee() {
             const id = document.getElementById('nidInput').value.trim();
             
@@ -1769,7 +1871,9 @@ service cloud.firestore {
         function renderEmpUI() {
             if(!currentEmpData) return;
             
-            document.getElementById('displayName').innerText = currentEmpData.name || 'غير معروف';
+            // عرض الاسم باللقب المناسب بناءً على الجنس وعضوية هيئة التدريس
+            const formattedName = getNameWithPrefix(currentEmpData);
+            document.getElementById('displayName').innerText = formattedName || currentEmpData.name || 'غير معروف';
             document.getElementById('displayId').innerText = `الرقم القومي: ${currentEmpData.nationalId}`;
             
             const schedule = currentEmpData.schedule || [];
@@ -1791,7 +1895,12 @@ service cloud.firestore {
                 if (s.isSwapped || s.wasSwappedOut) {
                     row.className = 'swapped-row';
                 }
-                
+                // عرض اسم الزميل الذي تم التبديل معه باللقب المناسب إذا وجد
+                let partnerDisplay = '-';
+                if (s.swappedWith) {
+                    const match = allEmployees.find(e => e.name === s.swappedWith);
+                    partnerDisplay = match ? getNameWithPrefix(match) : s.swappedWith;
+                }
                 row.innerHTML = `
                     <td>${s.date}</td>
                     <td>${getDayAr(s.date)}</td>
@@ -1800,7 +1909,7 @@ service cloud.firestore {
                             '<span class="badge bg-primary">تبديل مع</span>' : 
                             '<span class="badge bg-success">أساسي</span>'}
                     </td>
-                    <td>${s.swappedWith ? s.swappedWith : '-'}</td>
+                    <td>${partnerDisplay}</td>
                     <td class="no-print">
                         ${s.isSwapped || s.wasSwappedOut ? 
                             `<button type="button" class="btn btn-sm btn-outline-info" onclick="showSwapDetails('${s.date}')">
@@ -1883,7 +1992,7 @@ service cloud.firestore {
                         
                         const select = document.getElementById('swTarget');
                         select.innerHTML = available.length > 0 ? 
-                            available.map(e => `<option value="${e.nationalId}">${e.name}</option>`).join('') : 
+                            available.map(e => `<option value="${e.nationalId}">${getNameWithPrefix(e)}</option>`).join('') : 
                             '<option value="">لا يوجد زملاء متاحين</option>';
                     };
                     
@@ -1911,9 +2020,11 @@ service cloud.firestore {
                         requestId: requestId,
                         myDate: date,
                         targetId: targetId,
-                        targetName: target.name,
+                        // استخدم الاسم مع اللقب للهدف
+                        targetName: getNameWithPrefix(target),
                         requesterId: currentEmpData.nationalId,
-                        requesterName: currentEmpData.name,
+                        // استخدم الاسم مع اللقب للمرسل
+                        requesterName: getNameWithPrefix(currentEmpData),
                         message: message || '',
                         status: 'pending',
                         timestamp: new Date().toISOString()
@@ -1964,7 +2075,8 @@ service cloud.firestore {
                     
                     allEmployees[targetIndex].notifications.push({
                         type: 'swap_request',
-                        from: currentEmpData.name,
+                        // استخدم اسم المرسل مع اللقب لضمان وضوح الإشعار
+                        from: getNameWithPrefix(currentEmpData),
                         message: `طلب تبديل يوم ${request.myDate}`,
                         requestId: request.requestId,
                         timestamp: new Date().toISOString(),
@@ -1979,7 +2091,19 @@ service cloud.firestore {
                 } else {
                     console.log('⚠️ تم حفظ طلب التبديل محلياً فقط');
                 }
-                
+                // تحديث واجهة الإدارة لعرض الطلب الجديد فوراً
+                if (typeof renderAdminSwaps === 'function') {
+                    try {
+                        renderAdminSwaps();
+                    } catch (err) {
+                        console.error('تعذر تحديث قائمة التبديلات بعد إضافة الطلب:', err);
+                    }
+                }
+                if (typeof updateStats === 'function') {
+                    try {
+                        updateStats();
+                    } catch (_) {}
+                }
                 return true;
             } catch (error) {
                 console.error('❌ خطأ في إضافة طلب التبديل:', error);
@@ -2035,7 +2159,7 @@ service cloud.firestore {
                         <p>يوم <b>${date}</b> (${getDayAr(date)})</p>
                         <label class="form-label fw-bold">اختر الزميل للتبديل:</label>
                         <select id="swTargetDirect" class="form-select mb-3">
-                            ${available.map(e => `<option value="${e.nationalId}">${e.name}</option>`).join('')}
+                            ${available.map(e => `<option value="${e.nationalId}">${getNameWithPrefix(e)}</option>`).join('')}
                         </select>
                         <div class="mt-3">
                             <label class="form-label fw-bold">رسالة إضافية (اختياري):</label>
@@ -2062,9 +2186,10 @@ service cloud.firestore {
                         requestId: requestId,
                         myDate: date,
                         targetId: targetId,
-                        targetName: target.name,
+                        // احفظ اسم الهدف باللقب المناسب بحيث يظهر بشكل صحيح في التبديلات
+                        targetName: getNameWithPrefix(target),
                         requesterId: currentEmpData.nationalId,
-                        requesterName: currentEmpData.name,
+                        requesterName: getNameWithPrefix(currentEmpData),
                         message: message || '',
                         status: 'pending',
                         timestamp: new Date().toISOString()
@@ -2125,7 +2250,7 @@ service cloud.firestore {
                         <img src="https://tse2.mm.bing.net/th/id/OIP.yBtj4Qi_E9aiWlLY8KLDGwAAAA?rs=1&amp;pid=ImgDetMain" alt="شعار الكلية" style="height:80px; display:block;">
                         <div style="font-weight:700; margin-top:5px;">كلية الطب البيطري جامعة المنيا</div>
                     </div>
-                    <h3 style="text-align: center; margin-bottom: 10px;">جدول ${currentEmpData.name}</h3>
+                    <h3 style="text-align: center; margin-bottom: 10px;">جدول ${getNameWithPrefix(currentEmpData)}</h3>
                     <p style="text-align: center; margin-bottom: 20px;">الرقم القومي: ${currentEmpData.nationalId}</p>
                     <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse;">
                         <thead>
@@ -2141,6 +2266,16 @@ service cloud.firestore {
                                 const isSwapped = s.isSwapped || s.wasSwappedOut;
                                 const statusLabel = isSwapped ? 'تبديل مع' : 'أساسي';
                                 const statusColor = isSwapped ? '#0d6efd' : '#198754';
+                                // استخدام الاسم مع اللقب إذا وجد الموظف في القائمة
+                                let swappedName = '-';
+                                if(s.swappedWith) {
+                                    const empMatch = allEmployees.find(e => e.name === s.swappedWith);
+                                    if(empMatch) {
+                                        swappedName = getNameWithPrefix(empMatch);
+                                    } else {
+                                        swappedName = s.swappedWith;
+                                    }
+                                }
                                 return `
                                 <tr ${isSwapped ? 'style="background-color: #e7f1fd;"' : ''}>
                                     <td style="text-align: center;">${s.date}</td>
@@ -2148,7 +2283,7 @@ service cloud.firestore {
                                     <td style="text-align: center;">
                                         <span style="background: ${statusColor}; color: white; padding: 3px 8px; border-radius: 4px;">${statusLabel}</span>
                                     </td>
-                                    <td style="text-align: center;">${s.swappedWith ? s.swappedWith : '-'}</td>
+                                    <td style="text-align: center;">${swappedName}</td>
                                 </tr>`;
                             }).join('')}
                         </tbody>
@@ -2323,9 +2458,11 @@ service cloud.firestore {
             }
             
             try {
-                const employeeData = {
+            const isFaculty = document.getElementById('aIsFaculty')?.checked || false;
+            const employeeData = {
                     name: name,
                     nationalId: id,
+                    isFaculty: isFaculty,
                     schedule: [],
                     pendingSwaps: [],
                     notifications: [],
@@ -2357,6 +2494,8 @@ service cloud.firestore {
                 
                 document.getElementById('aName').value = '';
                 document.getElementById('aId').value = '';
+                const facultyCheckbox = document.getElementById('aIsFaculty');
+                if (facultyCheckbox) facultyCheckbox.checked = false;
                 document.getElementById('aName').focus();
                 
                 renderAdminEmps();
@@ -2413,9 +2552,23 @@ service cloud.firestore {
                             continue;
                         }
                         
+                        // استخراج قيمة عمود "عضو هيئة تدريس" أو ما يشبهه من الملف
+                        const facultyRaw = row['عضو هيئة تدريس'] ?? row['عضو هئية تدريس'] ?? row['عضو هيئة تدريس؟'] ?? row['Faculty'] ?? row['faculty'] ?? row['isFaculty'] ?? row['IsFaculty'] ?? row['facultyMember'] ?? row['member'] ?? '';
+                        let isFacultyFlag = false;
+                        if (facultyRaw) {
+                            try {
+                                const valStr = facultyRaw.toString().trim().toLowerCase();
+                                if (valStr === 'نعم' || valStr === 'yes' || valStr === '1' || valStr === 'true' || valStr === 'y' || valStr === 'ن') {
+                                    isFacultyFlag = true;
+                                } else if (!isNaN(facultyRaw)) {
+                                    isFacultyFlag = Number(facultyRaw) !== 0;
+                                }
+                            } catch (_) {}
+                        }
                         const employeeData = {
                             name: name.toString(),
                             nationalId: nationalId.toString(),
+                            isFaculty: isFacultyFlag,
                             schedule: [],
                             pendingSwaps: [],
                             notifications: [],
@@ -2501,9 +2654,10 @@ service cloud.firestore {
                                 </div>
                             </div>
                             <div>
-                                <h6 class="mb-1 fw-bold">${emp.name}</h6>
+                                <h6 class="mb-1 fw-bold">${getNameWithPrefix(emp)}</h6>
                                 <small class="text-muted">${emp.nationalId}</small>
                                 <div class="mt-1">
+                                    ${emp.isFaculty ? `<span class="badge bg-info me-1">عضو هيئة تدريس</span>` : ''}
                                     <span class="badge bg-success me-1">${scheduleCount} يوم</span>
                                     ${pendingSwapsCount > 0 ? 
                                         `<span class="badge bg-warning">${pendingSwapsCount} طلب</span>` : ''}
@@ -2513,6 +2667,9 @@ service cloud.firestore {
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="openAssignModal('${emp.nationalId}')">
                                 <i class="fas fa-calendar-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editEmp('${emp.nationalId}')">
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-info" onclick="showEmpDetailsAdmin('${emp.nationalId}')">
                                 <i class="fas fa-eye"></i>
@@ -2617,18 +2774,15 @@ service cloud.firestore {
                 cancelButtonText: 'إلغاء',
                 confirmButtonColor: '#dc3545'
             }).then(async result => {
-                if(result.isConfirmed) {
+                if (result.isConfirmed) {
                     try {
                         // إزالة الموظف من المصفوفة المحلية
                         allEmployees = allEmployees.filter(e => e.nationalId !== empId);
-
                         // حفظ التغييرات محلياً
                         saveToLocalStorage();
-
                         // تحديث الواجهات والإحصائيات
                         renderAdminEmps();
                         updateStats();
-
                         // إذا كان Firebase مهيئاً، قم بحذف وثيقة الموظف من المجموعة مباشرة
                         let remoteDeleted = false;
                         if (firebaseInitialized && typeof db !== 'undefined') {
@@ -2639,42 +2793,99 @@ service cloud.firestore {
                                 console.warn('⚠️ تعذر حذف الموظف من Firebase مباشرة:', err);
                             }
                         }
-
                         // ثم احفظ باقي البيانات المحدثة في Firebase لخلق التزامن
                         const saved = await saveDataToFirebase();
-
                         if (remoteDeleted && saved) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'تم حذف الموظف بنجاح من السحابة والمحفوظات المحلية',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon:'success', title:'تم الحذف', text:'تم حذف الموظف بنجاح من السحابة والمحفوظات المحلية', timer:1500, showConfirmButton:false });
                         } else if (saved) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'تم حذف الموظف من المحفوظات المحلية وتحديث السحابة',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon:'success', title:'تم الحذف', text:'تم حذف الموظف من المحفوظات المحلية وتحديث السحابة', timer:1500, showConfirmButton:false });
                         } else {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'تم حذف الموظف من المحفوظات المحلية فقط',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon:'success', title:'تم الحذف', text:'تم حذف الموظف من المحفوظات المحلية فقط', timer:1500, showConfirmButton:false });
                         }
-
                     } catch (error) {
                         console.error('خطأ في الحذف:', error);
                         Swal.fire('خطأ', 'تعذر حذف الموظف', 'error');
                     }
                 }
             });
+        }
+
+        /**
+         * تعديل بيانات موظف موجود. يتيح للمسؤول تعديل اسم الموظف وكونه
+         * عضو هيئة تدريس أو لا. بعد حفظ التغييرات يتم تحديث قائمة الموظفين،
+         * التبديلات اليدوية، والجداول المرتبطة.
+         *
+         * @param {string} empId الرقم القومي للموظف
+         */
+        function editEmp(empId) {
+            const emp = allEmployees.find(e => e.nationalId === empId);
+            if (!emp) return;
+            Swal.fire({
+                title: 'تعديل بيانات الموظف',
+                html: `
+                    <div class="text-start">
+                        <div class="mb-3">
+                            <label class="form-label">الاسم</label>
+                            <input type="text" id="editEmpName" class="form-control" value="${emp.name}">
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="editEmpFaculty" ${emp.isFaculty ? 'checked' : ''}>
+                            <label class="form-check-label" for="editEmpFaculty">عضو هيئة تدريس</label>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'حفظ',
+                cancelButtonText: 'إلغاء',
+                preConfirm: () => {
+                    const newName = document.getElementById('editEmpName').value.trim();
+                    const newIsFaculty = document.getElementById('editEmpFaculty').checked;
+                    if (!newName) {
+                        Swal.showValidationMessage('يرجى إدخال الاسم');
+                        return false;
+                    }
+                    return { newName, newIsFaculty };
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const { newName, newIsFaculty } = result.value;
+                    emp.name = newName;
+                    emp.isFaculty = newIsFaculty;
+                    // تحديث أسماء التبديلات اليدوية
+                    (manualSwaps || []).forEach(swap => {
+                        if (swap.emp1Id === emp.nationalId) {
+                            swap.emp1Name = getNameWithPrefix(emp);
+                        }
+                        if (swap.emp2Id === emp.nationalId) {
+                            swap.emp2Name = getNameWithPrefix(emp);
+                        }
+                    });
+                    // حفظ التغييرات
+                    saveManualSwaps(manualSwaps);
+                    saveDataToFirebase();
+                    // تحديث الواجهات
+                    renderAdminEmps();
+                    updateStats();
+                    if (typeof renderMasterReport === 'function') {
+                        try { renderMasterReport(); } catch (_) {}
+                    }
+                    if (typeof renderAssignmentOverview === 'function') {
+                        try { renderAssignmentOverview(); } catch (_) {}
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم التعديل',
+                        text: 'تم تعديل بيانات الموظف بنجاح',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        // اجعل الدالة متاحة من خلال الكائن window حتى تعمل خاصية onclick
+        if (typeof window !== 'undefined') {
+            window.editEmp = editEmp;
         }
 
         async function addDate() {
@@ -3121,16 +3332,25 @@ service cloud.firestore {
                 let totalDays = 0;
                 
                 html += `<tr>
-                    <td class="text-start fw-bold" style="font-size: 11px;">${emp.name}</td>`;
+                    <td class="text-start fw-bold" style="font-size: 11px;">${getNameWithPrefix(emp)}</td>`;
                 
                 allDates.forEach(date => {
                     const assignment = schedule.find(s => s.date === date);
-                    
                     if(!assignment) {
                         html += `<td class="bg-light"></td>`;
                     } else if(assignment.wasSwappedOut || assignment.isSwapped) {
-                        html += `<td class="bg-primary bg-opacity-25" style="font-size: 10px;" title="تبديل مع ${assignment.swappedWith || 'غير معروف'}">
-                            <i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع
+                        // عند وجود تبديل، أظهر اسم الزميل في الخلية بالإضافة إلى وصف التبديل
+                        let swapName = assignment.swappedWith || '';
+                        if (swapName) {
+                            const matchEmp = allEmployees.find(e => e.name === swapName);
+                            if (matchEmp) {
+                                swapName = getNameWithPrefix(matchEmp);
+                            }
+                        } else {
+                            swapName = 'غير معروف';
+                        }
+                        html += `<td class="bg-primary bg-opacity-25" style="font-size: 10px; line-height:1.2;" title="تبديل مع ${swapName}">
+                            <i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع<br><small style="font-size: 9px;">${swapName}</small>
                         </td>`;
                         totalDays++;
                     } else {
@@ -3274,16 +3494,23 @@ service cloud.firestore {
             allEmployees.forEach(emp => {
                 const schedule = emp.schedule || [];
                 let total = 0;
-                html += `<tr><td class="text-start">${emp.name}</td>`;
+                html += `<tr><td class="text-start">${getNameWithPrefix(emp)}</td>`;
                 allDates.forEach(date => {
                     const assignment = schedule.find(s => s.date === date);
                     if (!assignment) {
                         html += `<td></td>`;
-                    } else if (assignment.wasSwappedOut) {
-                        html += `<td><i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع</td>`;
-                        total++;
-                    } else if (assignment.isSwapped) {
-                        html += `<td><i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع</td>`;
+                    } else if (assignment.wasSwappedOut || assignment.isSwapped) {
+                        // عرض اسم الزميل الذي تم التبديل معه
+                        let swapName = assignment.swappedWith || '';
+                        if (swapName) {
+                            const match = allEmployees.find(e => e.name === swapName);
+                            if (match) {
+                                swapName = getNameWithPrefix(match);
+                            }
+                        } else {
+                            swapName = 'غير معروف';
+                        }
+                        html += `<td style="font-size: 11px;"><i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع<br><small style="font-size: 10px;">${swapName}</small></td>`;
                         total++;
                     } else {
                         html += `<td><i class="fas fa-check text-success me-1"></i> أساسي</td>`;
@@ -3307,40 +3534,41 @@ service cloud.firestore {
                 });
             });
             
-            if(document.getElementById('statsSummary')) {
-                let summaryHtml = `
-                    <div class="mb-3">
-                        <h6 class="fw-bold">نظرة عامة</h6>
-                        <div class="row mt-3">
-                            <div class="col-6 mb-2">
-                                <div class="d-flex justify-content-between">
-                                    <span>إجمالي الموظفين:</span>
-                                    <span class="fw-bold">${allEmployees.length}</span>
+                if (document.getElementById('statsSummary')) {
+                    // قم بتجميع عناصر النظرة العامة بطريقة تجعل صفوف الطلبات والتبديلات قابلة للنقر بأكملها،
+                    // وذلك لتحسين تجربة المستخدم وتسهيل فتح تفاصيل التبديلات من أي موضع في الصف.
+                    let summaryHtml = `
+                        <div class="mb-3">
+                            <h6 class="fw-bold">نظرة عامة</h6>
+                            <div class="row mt-3">
+                                <div class="col-6 mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>إجمالي الموظفين:</span>
+                                        <span class="fw-bold text-primary" style="cursor:pointer;" onclick="window.showEmployeeList()">${allEmployees.length}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>أيام الامتحانات:</span>
+                                        <span class="fw-bold">${allDates.length}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <div class="d-flex justify-content-between" onclick="window.showSwapOverview()" style="cursor:pointer;">
+                                        <span>طلبات التبديل:</span>
+                                        <span class="fw-bold text-primary">${pendingSwaps}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <div class="d-flex justify-content-between" onclick="window.showSwapOverview()" style="cursor:pointer;">
+                                        <span>تبديلات مكتملة:</span>
+                                        <span class="fw-bold text-primary">${completedSwaps}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex justify-content-between">
-                                    <span>أيام الامتحانات:</span>
-                                    <span class="fw-bold">${allDates.length}</span>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex justify-content-between">
-                                    <span>طلبات التبديل:</span>
-                                    <span class="fw-bold">${pendingSwaps}</span>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex justify-content-between">
-                                    <span>تبديلات مكتملة:</span>
-                                    <span class="fw-bold">${completedSwaps}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                
-                document.getElementById('statsSummary').innerHTML = summaryHtml;
-            }
+                        </div>`;
+                    document.getElementById('statsSummary').innerHTML = summaryHtml;
+                }
             
             updateStatsChart();
 
@@ -3450,13 +3678,15 @@ service cloud.firestore {
             
             element.classList.add('active');
             
-            if(tabId === 'adm4') {
+            if (tabId === 'adm4') {
                 renderMasterReport();
-            } else if(tabId === 'adm5') {
+            } else if (tabId === 'adm5') {
+                // عند الانتقال إلى تبويب الإحصائيات، قم بتحديث الإحصائيات والنظرة العامة لتجديد أرقامها وأحداثها
+                updateStats();
                 setTimeout(() => {
                     updateStatsChart();
                 }, 100);
-            } else if(tabId === 'adm3') {
+            } else if (tabId === 'adm3') {
                 renderAdminSwaps();
             }
         }
@@ -3568,6 +3798,12 @@ service cloud.firestore {
          * @param {string} type نوع الإشعار: 'success' للموافقة، 'error' للرفض
          */
         function showToast(message, type) {
+            /**
+             * إظهار توست بشكل جذاب مع تأثيرات حركة. يختلف الأيقون حسب نوع الرسالة
+             * (نجاح/خطأ/معلومة). استخدم animate.css لجعل التوست ينزلق إلى الداخل
+             * ويختفي بسلاسة. كما تم تعيين customClass إلى "custom-toast" ليتم
+             * تطبيق أنماط CSS البيضاوية والألوان.
+             */
             Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -3575,7 +3811,16 @@ service cloud.firestore {
                 title: message,
                 showConfirmButton: false,
                 timer: 4000,
-                timerProgressBar: true
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'custom-toast'
+                },
+                showClass: {
+                    popup: 'animate__animated animate__fadeInRight animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutRight animate__faster'
+                }
             });
         }
 
@@ -3628,6 +3873,85 @@ service cloud.firestore {
             } else {
                 badge.style.display = 'none';
             }
+
+            // بعد تحديث الشارة، تحقق من وجود طلبات تبديل جديدة لعرضها مباشرة
+            if (typeof checkIncomingSwapRequests === 'function') {
+                try {
+                    checkIncomingSwapRequests();
+                } catch (err) {
+                    console.error('تعذر التحقق من طلبات التبديل الواردة:', err);
+                }
+            }
+        }
+
+        /**
+         * يعرض تلقائياً للمستخدم أي طلبات تبديل واردة لم يتم قراءتها. يعرض حواراً تفاعلياً
+         * يتيح للمستخدم الموافقة أو الرفض بدون الحاجة لفتح الإشعارات.
+         */
+        async function checkIncomingSwapRequests() {
+            if (!currentEmpData) return;
+            const notifications = currentEmpData.notifications || [];
+            // احصل على كل الإشعارات من نوع طلب التبديل وغير المقروءة
+            const pendingNotifs = notifications.filter(n => !n.read && n.type === 'swap_request');
+            if (pendingNotifs.length === 0) return;
+            // معالجة كل إشعار واحداً تلو الآخر لمنع تداخل الحوارات
+            for (const notif of pendingNotifs) {
+                // البحث عن تفاصيل الطلب في قائمة الموظفين
+                let sender = null;
+                let request = null;
+                for (const emp of allEmployees) {
+                    const req = (emp.pendingSwaps || []).find(r => r.requestId === notif.requestId);
+                    if (req) {
+                        sender = emp;
+                        request = req;
+                        break;
+                    }
+                }
+                if (!request || !sender) {
+                    // إذا لم يتم العثور على الطلب قم بتمييز الإشعار كمقروء وتابع
+                    notif.read = true;
+                    continue;
+                }
+                // عرض حوار الموافقة/الرفض
+                const formattedSenderName = getNameWithPrefix(sender);
+                const dateStr = request.myDate;
+                const dayName = getDayAr(dateStr);
+                const message = request.message ? `<p class="mt-2"><small class="text-muted">"${request.message}"</small></p>` : '';
+                const result = await Swal.fire({
+                    title: 'طلب تبديل وارد',
+                    html: `<div class="text-start">${formattedSenderName} يريد التبديل معك يوم <b>${dateStr}</b> (${dayName})${message}</div>`,
+                    icon: 'info',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: 'موافقة',
+                    denyButtonText: 'رفض',
+                    cancelButtonText: 'لاحقاً',
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        denyButton: 'btn btn-danger',
+                        cancelButton: 'btn btn-secondary'
+                    }
+                });
+                // تمييز الإشعار كمقروء بعد عرض الحوار
+                notif.read = true;
+                if (result.isConfirmed) {
+                    // موافقة على الطلب
+                    await approveSwap(sender.nationalId, request.requestId);
+                } else if (result.isDenied) {
+                    // رفض الطلب
+                    await rejectSwap(sender.nationalId, request.requestId);
+                } else {
+                    // المستخدم اختار لاحقاً، لا نفعل شيئاً غير تعليم الإشعار كمقروء
+                }
+            }
+            // حفظ حالة قراءة الإشعارات بعد الانتهاء
+            const empIndex = allEmployees.findIndex(e => e.nationalId === currentEmpData.nationalId);
+            if (empIndex !== -1) {
+                allEmployees[empIndex].notifications = notifications;
+                allEmployees[empIndex].lastUpdated = new Date().toISOString();
+            }
+            await saveDataToFirebase();
+            updateNotificationBadge();
         }
 
         // دالة لعرض جدول الملاحظات اليومي بناءً على التاريخ المختار
@@ -3649,7 +3973,8 @@ service cloud.firestore {
                     if(schIso === isoDate) {
                         const swapped = sch.wasSwappedOut || sch.isSwapped;
                         rows.push({
-                            name: emp.name || 'غير معروف',
+                            // عرض الاسم مع اللقب المناسب
+                            name: getNameWithPrefix(emp) || emp.name || 'غير معروف',
                             nationalId: emp.nationalId || '-',
                             status: swapped ? 'تبديل مع' : 'أساسي',
                             details: sch.swappedWith || '-'
@@ -3926,7 +4251,8 @@ service cloud.firestore {
                     allEmployees[senderIndex].notifications.push({
                         type: 'swap_response',
                         response: 'approved',
-                        message: `تمت الموافقة على طلب التبديل ليوم ${request.myDate}${currentEmpData && currentEmpData.name ? ' مع ' + currentEmpData.name : ''}`,
+                        // تضمين اسم اليوم لتوضيح أكبر في الإشعار العائم
+                        message: `تمت الموافقة على طلب التبديل ليوم ${request.myDate} (${getDayAr(request.myDate)})${currentEmpData && currentEmpData.name ? ' مع ' + getNameWithPrefix(currentEmpData) : ''}`,
                         timestamp: new Date().toISOString(),
                         read: false
                     });
@@ -4031,7 +4357,8 @@ service cloud.firestore {
                 allEmployees[senderIndex].notifications.push({
                     type: 'swap_response',
                     response: 'rejected',
-                    message: `تم رفض طلب التبديل ليوم ${request.myDate}${currentEmpData && currentEmpData.name ? ' بواسطة ' + currentEmpData.name : ''}`,
+                    // تضمين اسم اليوم في إشعار الرفض لتوضيح أكبر
+                    message: `تم رفض طلب التبديل ليوم ${request.myDate} (${getDayAr(request.myDate)})${currentEmpData && currentEmpData.name ? ' بواسطة ' + getNameWithPrefix(currentEmpData) : ''}`,
                     timestamp: new Date().toISOString(),
                     read: false
                 });
@@ -4059,6 +4386,13 @@ service cloud.firestore {
                 }
                 
                 renderAdminEmps();
+                if (typeof renderAdminSwaps === 'function') {
+                    try {
+                        renderAdminSwaps();
+                    } catch (err) {
+                        console.error('تعذر تحديث قائمة التبديلات بعد الرفض:', err);
+                    }
+                }
                 updateStats();
                 updateNotificationBadge();
                 
@@ -4077,9 +4411,9 @@ service cloud.firestore {
                     const target = allEmployees.find(e => e.nationalId === request.targetId);
                     const requestWithDetails = {
                         ...request,
-                        senderName: employee.name,
+                        senderName: getNameWithPrefix(employee),
                         senderId: employee.nationalId,
-                        targetName: target ? target.name : 'غير معروف'
+                        targetName: target ? getNameWithPrefix(target) : 'غير معروف'
                     };
                     
                     if(request.status === 'completed') {
@@ -4133,7 +4467,7 @@ service cloud.firestore {
             
             let completedHtml = '';
             if(completedRequests.length > 0) {
-                completedRequests.slice(0, 10).forEach(req => {
+                    completedRequests.slice(0, 10).forEach(req => {
                     completedHtml += `
                         <div class="request-card status-approved p-3 mb-2" 
                              onclick="showSwapRequestDetails('${req.senderId}', '${req.requestId}')">
@@ -4146,13 +4480,11 @@ service cloud.firestore {
                                 </div>
                                 <div class="d-flex align-items-center gap-1">
                                     <span class="badge bg-success">مكتمل</span>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteSwapAdmin('${req.senderId}', '${req.requestId}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <!-- إزالة زر الحذف للطلبات المكتملة لجعل الواجهة أبسط -->
                                 </div>
                             </div>
                         </div>`;
-                });
+                    });
                 
                 if(completedRequests.length > 10) {
                     completedHtml += `<div class="text-center mt-2">
@@ -4164,6 +4496,14 @@ service cloud.firestore {
             }
             
             document.getElementById('completedSwapsList').innerHTML = completedHtml;
+            // بعد حساب الطلبات المعلقة والمكتملة، قم بعرض التبديلات اليدوية أيضاً
+            if (typeof renderManualSwaps === 'function') {
+                try {
+                    renderManualSwaps();
+                } catch (err) {
+                    console.warn('تعذر عرض التبديلات اليدوية:', err);
+                }
+            }
         }
 
         function showSwapRequestDetails(senderId, requestId) {
@@ -4183,14 +4523,14 @@ service cloud.firestore {
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded">
                                     <h6 class="fw-bold">المرسل</h6>
-                                    <p class="mb-1"><i class="fas fa-user me-2"></i>${sender.name}</p>
+                                    <p class="mb-1"><i class="fas fa-user me-2"></i>${getNameWithPrefix(sender)}</p>
                                     <small class="text-muted">${sender.nationalId}</small>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded">
                                     <h6 class="fw-bold">المستلم</h6>
-                                    <p class="mb-1"><i class="fas fa-user me-2"></i>${target ? target.name : 'غير معروف'}</p>
+                                    <p class="mb-1"><i class="fas fa-user me-2"></i>${target ? getNameWithPrefix(target) : 'غير معروف'}</p>
                                     <small class="text-muted">${request.targetId}</small>
                                 </div>
                             </div>
@@ -4283,10 +4623,12 @@ service cloud.firestore {
 
                 // إضافة إشعار إلى المرسل والمستهدف يفيد بأن الطلب تمت الموافقة عليه
                 // نربط كل إشعار بمعرّف الطلب لسهولة التتبع لاحقاً
+                // إشعار لإبلاغ الطرفين بأن الطلب تمت الموافقة عليه بواسطة الإدارة. يتضمن اليوم والتاريخ.
                 const approvalNotif = {
                     type: 'swap_response',
                     response: 'approved',
-                    message: `تمت الموافقة على طلب التبديل ليوم ${request.myDate}`,
+                    // تضمين اليوم والتاريخ والجهة الموافقة لظهورها في الإشعار العائم
+                    message: `تمت الموافقة على طلب التبديل ليوم ${request.myDate} (${getDayAr(request.myDate)}) بواسطة الإدارة`,
                     timestamp: new Date().toISOString(),
                     read: false,
                     requestId: requestId
@@ -4393,7 +4735,8 @@ service cloud.firestore {
                 const rejectNotif = {
                     type: 'swap_response',
                     response: 'rejected',
-                    message: `تم رفض طلب التبديل ليوم ${request.myDate}`,
+                    // إشعار يوضح سبب الرفض ومن قام به (الإدارة)
+                    message: `تم رفض طلب التبديل ليوم ${request.myDate} (${getDayAr(request.myDate)}) بواسطة الإدارة`,
                     timestamp: new Date().toISOString(),
                     read: false,
                     requestId: requestId
@@ -4473,25 +4816,13 @@ service cloud.firestore {
                         });
                         const saved = await saveDataToFirebase();
                         if (saved) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'تم حذف طلب التبديل بنجاح',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon:'success', title:'تم الحذف', text:'تم حذف طلب التبديل بنجاح', timer:1500, showConfirmButton:false });
                         } else {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'تم حذف طلب التبديل محلياً فقط',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon:'success', title:'تم الحذف', text:'تم حذف طلب التبديل محلياً فقط', timer:1500, showConfirmButton:false });
                         }
-                        // تحديث واجهات الإدارة بعد الحذف
-                        if (typeof renderAdminSwaps === 'function') renderAdminSwaps();
+                        // تحديث الواجهات بعد الحذف
                         if (typeof renderAdminEmps === 'function') renderAdminEmps();
+                        if (typeof renderAdminSwaps === 'function') renderAdminSwaps();
                         if (typeof updateStats === 'function') updateStats();
                     } catch (error) {
                         console.error('خطأ في حذف طلب التبديل:', error);
@@ -4499,6 +4830,457 @@ service cloud.firestore {
                     }
                 }
             });
+        }
+
+        /* ==================== التبديلات اليدوية ==================== */
+        /**
+         * تحميل التبديلات اليدوية من التخزين المحلي.
+         */
+        function loadManualSwaps() {
+            try {
+                return JSON.parse(localStorage.getItem('manualSwaps') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        /**
+         * حفظ التبديلات اليدوية في التخزين المحلي وتحديثها في Firebase إن أمكن.
+         *
+         * @param {Array} arr
+         */
+        function saveManualSwaps(arr) {
+            manualSwaps = arr;
+            localStorage.setItem('manualSwaps', JSON.stringify(arr));
+            if (typeof updateManualSwapsInFirebase === 'function') {
+                updateManualSwapsInFirebase(arr);
+            }
+        }
+
+        /**
+         * مزامنة التبديلات اليدوية من Firebase إلى التخزين المحلي.
+         */
+        async function syncManualSwapsFromFirebase() {
+            if (firebaseInitialized && typeof db !== 'undefined') {
+                try {
+                    const docRef = db.collection('settings').doc('manualSwaps');
+                    const doc = await docRef.get();
+                    if (doc.exists) {
+                        const list = doc.data().list || doc.data().manualSwaps || [];
+                        manualSwaps = list;
+                        localStorage.setItem('manualSwaps', JSON.stringify(list));
+                    }
+                } catch (err) {
+                    console.warn('⚠️ تعذر تحميل التبديلات اليدوية من Firebase:', err);
+                }
+            }
+        }
+
+        /**
+         * تحديث التبديلات اليدوية في مستند Firebase.
+         */
+        async function updateManualSwapsInFirebase(arr) {
+            if (firebaseInitialized && typeof db !== 'undefined') {
+                try {
+                    await db.collection('settings').doc('manualSwaps').set({
+                        list: arr,
+                        lastUpdated: new Date().toISOString()
+                    }, { merge: true });
+                } catch (err) {
+                    console.warn('⚠️ تعذر حفظ التبديلات اليدوية في Firebase:', err);
+                }
+            }
+        }
+
+        /**
+         * عرض قائمة التبديلات اليدوية في واجهة الإدارة.
+         */
+        function renderManualSwaps() {
+            const container = document.getElementById('manualSwapsList');
+            if (!container) return;
+            if (!manualSwaps || manualSwaps.length === 0) {
+                container.innerHTML = '<div class="text-center py-3 text-muted"><i class="fas fa-exchange-alt fa-2x mb-2"></i><p class="mb-0">لا توجد تبديلات يدوية</p></div>';
+                return;
+            }
+            let html = '';
+            manualSwaps.forEach((swap) => {
+                html += `<div class="request-card p-3 mb-2 animate__animated animate__fadeIn">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">${swap.date} (${getDayAr(swap.date)})</small>
+                            <div class="mt-1">
+                                <b>${swap.emp1Name}</b> <i class="fas fa-arrow-left mx-1 text-muted"></i> <b>${swap.emp2Name}</b>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editManualSwap('${swap.id}')"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteManualSwap('${swap.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        /**
+         * إظهار نموذج لإضافة أو تعديل تبديل يدوي.
+         * @param {string} existingId معرف التبديل عند التعديل (اختياري)
+         */
+        function showManualSwapModal(existingId) {
+            let defaultDate = allDates[0] || '';
+            let emp1Id = '';
+            let emp2Id = '';
+            if (existingId) {
+                const swap = manualSwaps.find(s => s.id === existingId);
+                if (swap) {
+                    defaultDate = swap.date;
+                    emp1Id = swap.emp1Id;
+                    emp2Id = swap.emp2Id;
+                }
+            }
+            let dateOptions = allDates.map(d => `<option value="${d}" ${d===defaultDate ? 'selected' : ''}>${d} (${getDayAr(d)})</option>`).join('');
+            let listOptions = allEmployees.map(emp => `<option value="${emp.nationalId}">${getNameWithPrefix(emp)}</option>`).join('');
+            const html = `
+                <div class="text-start">
+                    <div class="mb-3">
+                        <label class="form-label">التاريخ</label>
+                        <select id="manualSwapDateInput" class="form-select">${dateOptions}</select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">الموظف الأول</label>
+                        <input type="text" id="manualSwapEmp1Input" class="form-control" list="manualEmpList" value="${emp1Id}" placeholder="رقم قومي أو اسم">
+                        <datalist id="manualEmpList">${listOptions}</datalist>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">الموظف الثاني (متاح)</label>
+                        <select id="manualSwapEmp2Select" class="form-select"></select>
+                    </div>
+                </div>`;
+            Swal.fire({
+                title: existingId ? 'تعديل تبديل يدوي' : 'إضافة تبديل يدوي',
+                html,
+                showCancelButton: true,
+                confirmButtonText: 'حفظ',
+                cancelButtonText: 'إلغاء',
+                didOpen: () => {
+                    const dateInput = document.getElementById('manualSwapDateInput');
+                    const emp1Input = document.getElementById('manualSwapEmp1Input');
+                    const emp2Select = document.getElementById('manualSwapEmp2Select');
+                    function updateEmp2List() {
+                        const selectedDate = dateInput.value;
+                        const emp1Val = emp1Input.value.trim();
+                        let selectedEmp1 = allEmployees.find(e => e.nationalId === emp1Val);
+                        if (!selectedEmp1) {
+                            selectedEmp1 = allEmployees.find(e => getNameWithPrefix(e) === emp1Val || e.name === emp1Val);
+                        }
+                        let options = '<option value="">اختر موظف</option>';
+                        allEmployees.forEach(emp => {
+                            if (selectedEmp1 && emp.nationalId === selectedEmp1.nationalId) return;
+                            const assignment = (emp.schedule || []).find(s => s.date === selectedDate);
+                            if (!assignment) {
+                                options += `<option value="${emp.nationalId}">${getNameWithPrefix(emp)}</option>`;
+                            }
+                        });
+                        emp2Select.innerHTML = options;
+                        if (existingId && emp2Id) {
+                            emp2Select.value = emp2Id;
+                        }
+                    }
+                    dateInput.addEventListener('change', updateEmp2List);
+                    emp1Input.addEventListener('input', updateEmp2List);
+                    updateEmp2List();
+                    if (existingId && emp1Id) {
+                        dateInput.value = defaultDate;
+                        emp1Input.value = emp1Id;
+                    }
+                },
+                preConfirm: () => {
+                    const selectedDate = document.getElementById('manualSwapDateInput').value;
+                    const emp1Val = document.getElementById('manualSwapEmp1Input').value.trim();
+                    const emp2Val = document.getElementById('manualSwapEmp2Select').value.trim();
+                    let emp1 = allEmployees.find(e => e.nationalId === emp1Val);
+                    if (!emp1) emp1 = allEmployees.find(e => getNameWithPrefix(e) === emp1Val || e.name === emp1Val);
+                    const emp2 = allEmployees.find(e => e.nationalId === emp2Val);
+                    if (!selectedDate || !emp1 || !emp2) {
+                        Swal.showValidationMessage('يرجى اختيار التاريخ والموظفين');
+                        return false;
+                    }
+                    const assignment1 = (emp1.schedule || []).find(s => s.date === selectedDate);
+                    if (!assignment1) {
+                        Swal.showValidationMessage('الموظف الأول ليس لديه تكليف في هذا اليوم');
+                        return false;
+                    }
+                    const assignment2 = (emp2.schedule || []).find(s => s.date === selectedDate);
+                    if (assignment2) {
+                        Swal.showValidationMessage('الموظف الثاني لديه تكليف في هذا اليوم');
+                        return false;
+                    }
+                    return { selectedDate, emp1Id: emp1.nationalId, emp2Id: emp2.nationalId };
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const { selectedDate, emp1Id: newEmp1Id, emp2Id: newEmp2Id } = result.value;
+                    if (existingId) {
+                        updateManualSwap(existingId, newEmp1Id, newEmp2Id, selectedDate);
+                    } else {
+                        createManualSwap(newEmp1Id, newEmp2Id, selectedDate);
+                    }
+                }
+            });
+        }
+
+        // إسناد الدالة إلى كائن window لضمان إمكانية استدعائها من خصائص onclick في HTML
+        if (typeof window !== 'undefined') {
+            window.showManualSwapModal = showManualSwapModal;
+        }
+
+        /* ==================== إحصائيات تفاعلية ==================== */
+        /**
+         * عرض قائمة بأسماء جميع الموظفين في نافذة منبثقة.
+         */
+        function showEmployeeList() {
+            if (!allEmployees || allEmployees.length === 0) {
+                Swal.fire('لا يوجد موظفين', 'لا توجد بيانات موظفين لعرضها', 'info');
+                return;
+            }
+            const listItems = allEmployees.map(emp => `<li class="mb-1"><i class="fas fa-user me-2 text-primary"></i>${getNameWithPrefix(emp)} <span class="text-muted small">(${emp.nationalId})</span></li>`).join('');
+            const html = `<ul class="list-unstyled" style="max-height:400px; overflow-y:auto; padding-right:1rem;">${listItems}</ul>`;
+            Swal.fire({
+                title: 'قائمة الموظفين',
+                html: html,
+                width: 600,
+                confirmButtonText: 'حسناً'
+            });
+        }
+
+        // جعل الدالة متاحة عبر نافذة المتصفح ليستدعيها onclick
+        if (typeof window !== 'undefined') {
+            window.showEmployeeList = showEmployeeList;
+        }
+
+        /**
+         * عرض قائمة التبديلات (الطلبات والمكتملة واليدوية) في نافذة منبثقة.
+         */
+        function showSwapOverview() {
+            let items = [];
+            // جمع التبديلات من الطلبات المعلقة والمكتملة
+            allEmployees.forEach(emp => {
+                (emp.pendingSwaps || []).forEach(swap => {
+                    const target = allEmployees.find(e => e.nationalId === swap.targetId);
+                    items.push({
+                        date: swap.myDate,
+                        from: getNameWithPrefix(emp),
+                        to: target ? getNameWithPrefix(target) : 'غير معروف',
+                        status: swap.status === 'pending' ? 'قيد الانتظار' : 'مكتمل'
+                    });
+                });
+            });
+            // إضافة التبديلات اليدوية
+            (manualSwaps || []).forEach(swap => {
+                items.push({
+                    date: swap.date,
+                    from: swap.emp1Name,
+                    to: swap.emp2Name,
+                    status: 'يدوي'
+                });
+            });
+            if (items.length === 0) {
+                Swal.fire('لا توجد تبديلات', 'لا توجد بيانات تبديلات لعرضها', 'info');
+                return;
+            }
+            // فرز حسب التاريخ الأحدث أولاً
+            items.sort((a,b) => new Date(b.date) - new Date(a.date));
+            const rows = items.map(item => `<tr>
+                <td>${item.date} (${getDayAr(item.date)})</td>
+                <td>${item.from}</td>
+                <td>${item.to}</td>
+                <td><span class="badge ${item.status==='قيد الانتظار' ? 'bg-warning' : item.status==='مكتمل' ? 'bg-success' : 'bg-info'}">${item.status}</span></td>
+            </tr>`).join('');
+            const html = `<div style="overflow-x:auto;">
+                <table class="table table-bordered table-sm text-center align-middle" style="min-width: 400px;">
+                    <thead class="table-light">
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>المرسل</th>
+                            <th>المستلم</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+            Swal.fire({
+                title: 'تفاصيل التبديلات',
+                html: html,
+                width: 700,
+                confirmButtonText: 'حسناً'
+            });
+        }
+
+        // جعل الدالة متاحة عبر نافذة المتصفح ليستدعيها onclick
+        if (typeof window !== 'undefined') {
+            window.showSwapOverview = showSwapOverview;
+        }
+
+        /**
+         * إنشاء تبديل يدوي جديد وربط التعديلات بجدول الموظفين.
+         */
+        function createManualSwap(emp1Id, emp2Id, date) {
+            const swapId = 'm' + Date.now().toString();
+            const emp1 = allEmployees.find(e => e.nationalId === emp1Id);
+            const emp2 = allEmployees.find(e => e.nationalId === emp2Id);
+            if (!emp1 || !emp2) return;
+            applyManualSwap(emp1, emp2, date);
+            const newSwap = {
+                id: swapId,
+                date: date,
+                emp1Id: emp1Id,
+                emp1Name: getNameWithPrefix(emp1),
+                emp2Id: emp2Id,
+                emp2Name: getNameWithPrefix(emp2),
+                createdAt: new Date().toISOString()
+            };
+            manualSwaps.push(newSwap);
+            saveManualSwaps(manualSwaps);
+            saveDataToFirebase();
+            renderManualSwaps();
+            renderAdminEmps();
+            updateStats();
+            if (typeof renderMasterReport === 'function') {
+                try { renderMasterReport(); } catch (_) {}
+            }
+            if (typeof renderAssignmentOverview === 'function') {
+                try { renderAssignmentOverview(); } catch (_) {}
+            }
+            Swal.fire({ icon:'success', title:'تم الحفظ', text:'تم إنشاء التبديل اليدوي بنجاح', timer:1500, showConfirmButton:false });
+        }
+
+        /**
+         * تعديل تبديل يدوي قائم. يتم أولاً التراجع عن التبديل القديم، ثم تطبيق الجديد.
+         */
+        function updateManualSwap(swapId, newEmp1Id, newEmp2Id, date) {
+            const idx = manualSwaps.findIndex(s => s.id === swapId);
+            if (idx === -1) return;
+            const oldSwap = manualSwaps[idx];
+            revertManualSwap(oldSwap);
+            manualSwaps[idx] = {
+                ...oldSwap,
+                emp1Id: newEmp1Id,
+                emp1Name: getNameWithPrefix(allEmployees.find(e => e.nationalId === newEmp1Id)) || '',
+                emp2Id: newEmp2Id,
+                emp2Name: getNameWithPrefix(allEmployees.find(e => e.nationalId === newEmp2Id)) || '',
+                date: date,
+                updatedAt: new Date().toISOString()
+            };
+            const emp1 = allEmployees.find(e => e.nationalId === newEmp1Id);
+            const emp2 = allEmployees.find(e => e.nationalId === newEmp2Id);
+            applyManualSwap(emp1, emp2, date);
+            saveManualSwaps(manualSwaps);
+            saveDataToFirebase();
+            renderManualSwaps();
+            renderAdminEmps();
+            updateStats();
+            if (typeof renderMasterReport === 'function') {
+                try { renderMasterReport(); } catch (_) {}
+            }
+            if (typeof renderAssignmentOverview === 'function') {
+                try { renderAssignmentOverview(); } catch (_) {}
+            }
+            Swal.fire({ icon:'success', title:'تم التعديل', text:'تم تعديل التبديل اليدوي بنجاح', timer:1500, showConfirmButton:false });
+        }
+
+        /**
+         * حذف تبديل يدوي واسترجاع التعديلات من جداول الموظفين.
+         */
+        function deleteManualSwap(swapId) {
+            const idx = manualSwaps.findIndex(s => s.id === swapId);
+            if (idx === -1) return;
+            const swap = manualSwaps[idx];
+            Swal.fire({
+                title:'تأكيد الحذف',
+                text:'هل أنت متأكد من حذف التبديل اليدوي؟',
+                icon:'warning',
+                showCancelButton:true,
+                confirmButtonText:'نعم، احذف',
+                cancelButtonText:'إلغاء',
+                confirmButtonColor:'#dc3545'
+            }).then(res => {
+                if (res.isConfirmed) {
+                    revertManualSwap(swap);
+                    manualSwaps.splice(idx, 1);
+                    saveManualSwaps(manualSwaps);
+                    saveDataToFirebase();
+                    renderManualSwaps();
+                    renderAdminEmps();
+                    updateStats();
+                    if (typeof renderMasterReport === 'function') {
+                        try { renderMasterReport(); } catch (_) {}
+                    }
+                    if (typeof renderAssignmentOverview === 'function') {
+                        try { renderAssignmentOverview(); } catch (_) {}
+                    }
+                    Swal.fire({ icon:'success', title:'تم الحذف', text:'تم حذف التبديل اليدوي بنجاح', timer:1500, showConfirmButton:false });
+                }
+            });
+        }
+
+        /**
+         * استدعاء تحرير التبديل اليدوي. هذه الوظيفة مجرد غلاف يستدعي النموذج
+         * الخاص بالتعديل أو الإضافة مع تمرير معرف التبديل. عند النقر على زر
+         * التعديل في قائمة التبديلات اليدوية، يتم استدعاء هذه الوظيفة.
+         *
+         * @param {string} id معرف التبديل
+         */
+        function editManualSwap(id) {
+            showManualSwapModal(id);
+        }
+
+        // جعل الدالة متاحة من خلال window
+        if (typeof window !== 'undefined') {
+            window.editManualSwap = editManualSwap;
+        }
+
+        /**
+         * تطبيق تبديل يدوي على جداول الموظفين.
+         */
+        function applyManualSwap(emp1, emp2, date) {
+            if (!emp1 || !emp2) return;
+            emp1.schedule = emp1.schedule.map(a => {
+                if (a.date === date) {
+                    return { ...a, wasSwappedOut: true, swappedWith: emp2.name };
+                } else {
+                    return a;
+                }
+            });
+            emp1.lastUpdated = new Date().toISOString();
+            const newAssign = {
+                date: date,
+                isSwapped: true,
+                swappedWith: emp1.name,
+                swappedFrom: emp1.nationalId
+            };
+            emp2.schedule = [...(emp2.schedule || []).filter(a => a.date !== date), newAssign];
+            emp2.lastUpdated = new Date().toISOString();
+        }
+
+        /**
+         * التراجع عن تبديل يدوي واستعادة حالة الجداول كما كانت.
+         */
+        function revertManualSwap(swap) {
+            const emp1 = allEmployees.find(e => e.nationalId === swap.emp1Id);
+            const emp2 = allEmployees.find(e => e.nationalId === swap.emp2Id);
+            if (!emp1 || !emp2) return;
+            emp1.schedule = emp1.schedule.map(a => {
+                if (a.date === swap.date) {
+                    const restored = { ...a };
+                    delete restored.wasSwappedOut;
+                    delete restored.swappedWith;
+                    return restored;
+                } else {
+                    return a;
+                }
+            });
+            emp2.schedule = (emp2.schedule || []).filter(a => !(a.date === swap.date && a.isSwapped && a.swappedFrom === swap.emp1Id));
         }
         function showQuickActions() {
             document.getElementById('quickActionsModal').classList.remove('d-none');
@@ -4509,27 +5291,46 @@ service cloud.firestore {
         }
 
         function showHelp() {
-            Swal.fire({
-                title: 'كيفية استخدام النظام',
-                html: `
-                    <div class="text-start">
-                        <h6 class="fw-bold text-primary mb-3"><i class="fas fa-search me-2"></i>البحث عن الموظف</h6>
-                        <p class="mb-3">أدخل الرقم القومي في مربع البحث ثم اضغط على زر "بحث" للعثور على الموظف وعرض جدوله.</p>
-                        
-                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-exchange-alt me-2"></i>طلب تبديل</h6>
-                        <p class="mb-3">انقر على زر "طلب تبديل" لفتح نافذة التبديل. اختر اليوم الذي تريد تبديله، ثم اختر الزميل المتاح.</p>
-                        
-                        <h6 class="fw-bold text-success mb-3"><i class="fas fa-bell me-2"></i>الإشعارات</h6>
-                        <p class="mb-3">انقر على زر الجرس لعرض الإشعارات وطلبات التبديل الواردة. يمكنك الموافقة أو الرفض من هناك.</p>
-                        
-                        <h6 class="fw-bold text-info mb-3"><i class="fas fa-download me-2"></i>حفظ الجدول</h6>
-                        <p class="mb-0">انقر على زر "حفظ كصورة" لتحميل جدولك كصورة يمكن طباعتها أو مشاركتها.</p>
-                    </div>
-                `,
-                width: 600,
-                showConfirmButton: true,
-                confirmButtonText: 'حسناً'
-            });
+            // جلب التعليمات من التخزين المحلي. إذا كانت هناك تعليمات مضافة بواسطة الإدارة
+            // سيتم عرضها للمستخدم. في حال عدم وجود تعليمات مخصصة، ستظهر نصائح الاستخدام
+            // الافتراضية كدليل مبسط.
+            const instructions = loadInstructions();
+            if (instructions && instructions.length > 0) {
+                // عرض التعليمات المخصصة في شكل قائمة نقطية جذابة بدلاً من مربعات ملونة
+                const htmlItems = instructions.map(text =>
+                    `<li class="mb-2 d-flex align-items-start"><i class="fas fa-circle-check text-primary me-2"></i><span>${text}</span></li>`
+                ).join('');
+                Swal.fire({
+                    title: 'تعليمات هامة',
+                    html: `<ul class="list-unstyled text-start mb-0">${htmlItems}</ul>`,
+                    width: 550,
+                    showConfirmButton: true,
+                    confirmButtonText: 'حسناً'
+                });
+            } else {
+                // إذا لم تكن هناك تعليمات مخصصة، نعرض دليل استخدام مبسط بطريقة منظمة
+                Swal.fire({
+                    title: 'كيفية استخدام النظام',
+                    html: `
+                        <div class="text-start">
+                            <h6 class="fw-bold text-primary mb-2"><i class="fas fa-search me-2"></i>البحث عن الموظف</h6>
+                            <p class="mb-2">أدخل الرقم القومي في مربع البحث ثم اضغط على زر "بحث" للعثور على الموظف وعرض جدوله.</p>
+                            
+                            <h6 class="fw-bold text-warning mb-2"><i class="fas fa-exchange-alt me-2"></i>طلب تبديل</h6>
+                            <p class="mb-2">انقر على زر "طلب تبديل" لفتح نافذة التبديل. اختر اليوم الذي تريد تبديله، ثم اختر الزميل المتاح.</p>
+                            
+                            <h6 class="fw-bold text-success mb-2"><i class="fas fa-bell me-2"></i>الإشعارات</h6>
+                            <p class="mb-2">ستظهر رسائل التنبيه تلقائياً عند وصول طلبات جديدة. يمكنك قبول الطلب أو رفضه من الرسالة مباشرة دون الحاجة لفتح الإشعارات.</p>
+                            
+                            <h6 class="fw-bold text-info mb-2"><i class="fas fa-download me-2"></i>حفظ الجدول</h6>
+                            <p class="mb-0">انقر على زر "حفظ كصورة" لتحميل جدولك كصورة يمكن طباعتها أو مشاركتها.</p>
+                        </div>
+                    `,
+                    width: 550,
+                    showConfirmButton: true,
+                    confirmButtonText: 'حسناً'
+                });
+            }
         }
 
         async function refreshSwaps() {
@@ -4607,16 +5408,23 @@ service cloud.firestore {
                 document.documentElement.style.setProperty('--primary-light', light);
             }
             (function() {
-                const savedColor = localStorage.getItem('adminColor');
                 const cp = document.getElementById('colorPicker');
-                if(savedColor) {
-                    applyColor(savedColor);
-                    if(cp) cp.value = savedColor;
+                // توليد لون عشوائي في كل مرة يتم فيها فتح التطبيق
+                let randomColor = '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0');
+                applyColor(randomColor);
+                if (cp) {
+                    cp.value = randomColor;
                 }
+                // حفظ اللون العشوائي في التخزين المحلي بحيث يظهر للمستخدم إذا أراد معرفة الكود
+                try {
+                    localStorage.setItem('adminColor', randomColor);
+                } catch (e) {}
                 if(cp) {
                     cp.addEventListener('input', function() {
                         applyColor(this.value);
-                        localStorage.setItem('adminColor', this.value);
+                        try {
+                            localStorage.setItem('adminColor', this.value);
+                        } catch (e) {}
                     });
                 }
             })();
@@ -4816,7 +5624,8 @@ service cloud.firestore {
             if (typeof syncInstructionsFromFirebase === 'function') {
                 await syncInstructionsFromFirebase();
             }
-            renderUserInstructions();
+            // لم يعد يتم عرض التعليمات تلقائياً للمستخدم في الصفحة الرئيسية.
+            // سيتم عرضها فقط عند النقر على زر "تعليمات هامة".
         });
     </script>
 
