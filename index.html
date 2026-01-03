@@ -35,6 +35,124 @@
         * {
             transition: var(--transition);
         }
+
+        /* تحويل الشريط الجانبي إلى شريط علوي متجاوب وأنيق */
+        #adminDashboardView .container-fluid > .row {
+            flex-direction: column;
+        }
+        /* الحاوية الكلية لشريط التحكم: تتحول إلى صف أفقي مع محاذاة العناصر */
+        #adminDashboardView .admin-sidebar {
+            width: 100% !important;
+            max-width: 100% !important;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            height: auto;
+            min-height: auto !important;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        /* قوائم التنقل داخل الشريط العلوي */
+        #adminDashboardView .admin-sidebar nav {
+            flex-grow: 1;
+            display: flex !important;
+            /* تجاوز فئة flex-column الافتراضية في Bootstrap لعرض العناصر أفقياً */
+            flex-direction: row !important;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 8px;
+        }
+        #adminDashboardView .admin-sidebar nav a {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            transition: background 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+        }
+        #adminDashboardView .admin-sidebar nav a:hover,
+        #adminDashboardView .admin-sidebar nav a.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        #adminDashboardView .admin-sidebar nav a i {
+            font-size: 1.1rem;
+        }
+        /* إخفاء رأس المعلومات في الشريط العلوي */
+        #adminDashboardView .admin-sidebar .text-center.mb-4 {
+            display: none;
+        }
+        /* إخفاء رقم النسخة في الشريط العلوي */
+        #adminDashboardView .admin-sidebar .position-absolute.bottom-0 {
+            display: none;
+        }
+        /* ضبط محتوى لوحة الإدارة ليملأ الشاشة تحت الشريط الجديد */
+        #adminDashboardView .col-md-10.p-4 {
+            width: 100% !important;
+            max-width: 100% !important;
+            /* إزالة المساحة العلوية الزائدة للاقتراب من الشريط العلوي */
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        /* إعدادات الطباعة لعرض تذييل الملاحظات اليومية */
+        @media print {
+            #dailyNotesFooter {
+                display: block !important;
+            }
+        }
+
+        /* تأكيد ظهور تبويب الملاحظات اليومية عند الطباعة وإخفاء بقية التبويبات */
+        @media print {
+            #adm6 {
+                display: block !important;
+                visibility: visible !important;
+            }
+            /* إخفاء جميع التبويبات الأخرى أثناء الطباعة لتوضيح التقرير */
+            .admin-tab:not(#adm6) {
+                display: none !important;
+            }
+        }
+
+        /* ضبط مظهر حاوية التحكم في اللون داخل شريط الإدارة */
+        #adminDashboardView .admin-sidebar > .p-3 {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+            /* ترتيب التسمية واختيار اللون بشكل أفقي */
+            flex-direction: row;
+            margin: 0;
+            padding: 0;
+        }
+        #adminDashboardView .admin-sidebar > .p-3 label {
+            margin: 0 !important;
+            font-size: 0.75rem;
+            color: #fff;
+        }
+
+        #adminDashboardView .admin-sidebar > .p-3 #colorPicker {
+            flex: 0 0 auto !important;
+        }
+        #adminDashboardView #colorPicker {
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
         
         body {
             font-family: 'Tajawal', sans-serif;
@@ -142,9 +260,9 @@
         
         .admin-nav-link:hover,
         .admin-nav-link.active {
-            background: rgba(26, 188, 156, 0.2);
-            color: white;
-            transform: translateX(-5px);
+            background: rgba(255, 255, 255, 0.3) !important;
+            color: #fff !important;
+            transform: translateY(-2px);
         }
         
         .request-card {
@@ -798,9 +916,17 @@
                         <a class="admin-nav-link" href="#" onclick="switchAdminTab('adm3', this)"><i class="fas fa-sync me-2"></i> طلبات التبديل</a>
                         <a class="admin-nav-link" href="#" onclick="switchAdminTab('adm4', this)"><i class="fas fa-file-invoice me-2"></i> الجدول العام</a>
                         <a class="admin-nav-link" href="#" onclick="switchAdminTab('adm5', this)"><i class="fas fa-chart-pie me-2"></i> الإحصائيات</a>
+                        <!-- رابط جديد لعرض جدول الملاحظات اليومية -->
+                        <a class="admin-nav-link" href="#" onclick="switchAdminTab('adm6', this)"><i class="fas fa-book-open me-2"></i> الملاحظات اليومية</a>
                         <hr class="bg-white mx-3">
                         <a class="admin-nav-link text-warning" href="#" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt me-2"></i> خروج</a>
                     </nav>
+
+                    <!-- عنصر اختيار اللون للتحكم في ألوان الواجهة -->
+                    <div class="p-3">
+                        <label for="colorPicker" class="form-label fw-bold text-white small">لون الواجهة</label>
+                        <input type="color" id="colorPicker" class="form-control form-control-color w-100" value="#4caf50" title="اختر لون الواجهة">
+                    </div>
                     
                     <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center text-white-50 small">
                         v2.1.0
@@ -924,6 +1050,13 @@
                                         </div>
                                         <div id="assignSearchResults" class="list-group" style="max-height: 400px; overflow-y: auto;"></div>
                                         <!-- جدول التوزيع: يعرض اسم الموظف والأيام المعينة بعلامة صح -->
+                                        <!-- قسم رفع ملف الملاحظات للموظفين -->
+                                        <div class="mb-4 mt-4">
+                                            <h6 class="fw-bold"><i class="fas fa-file-import me-2"></i> رفع ملف الملاحظات</h6>
+                                            <input type="file" id="notesFile" accept=".xlsx,.xls,.csv" class="form-control mb-2" />
+                                            <button class="btn btn-success w-100" onclick="uploadNotesFile()"><i class="fas fa-upload me-1"></i> استيراد الملاحظات</button>
+                                            <small class="text-muted d-block mt-2">الملف يجب أن يحتوي على عمود للاسم وعمود للتواريخ (مفصولة بفواصل)</small>
+                                        </div>
                                         <div id="assignmentOverview" class="mt-4"></div>
                                     </div>
                                 </div>
@@ -931,6 +1064,30 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- علامة تبويب جديدة لعرض الملاحظات اليومية -->
+    <div id="adm6" class="admin-tab d-none">
+        <div class="main-card mt-0">
+            <h5 class="fw-bold mb-3"><i class="fas fa-calendar-day me-2"></i> جدول الملاحظات اليومي</h5>
+            <div class="row g-3 align-items-end mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">اختر اليوم</label>
+                    <input type="date" id="dailyNotesDate" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" onclick="renderDailyNotes()"><i class="fas fa-search me-1"></i> عرض</button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-dark w-100" onclick="printDailyNotes()"><i class="fas fa-print me-1"></i> طباعة</button>
+                </div>
+            </div>
+            <div id="dailyNotesTableArea" class="table-responsive"></div>
+            <!-- يظهر هذا النص فقط عند الطباعة -->
+            <div id="dailyNotesFooter" class="mt-4 text-center" style="display:none;">
+                تصميم مهندس بولس سمير مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
             </div>
         </div>
     </div>
@@ -1891,7 +2048,7 @@ service cloud.firestore {
                         </tbody>
                     </table>
                     <p style="text-align: center; color: #000; margin-top: 20px; font-size: 12px;">
-                        تصميم مهندس بولس سمير – مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
+                        تصميم مهندس بولس سمير مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
                     </p>
                 </div>
             `;
@@ -3246,6 +3403,14 @@ service cloud.firestore {
                 ).length;
             }, 0);
             
+            // عرض إشعار التبديل تلقائياً دون الحاجة للنقر على الأيقونة
+            if(incomingSwaps > 0 && !window.swapPopupShown) {
+                window.swapPopupShown = true;
+                showNotifications();
+            } else if(incomingSwaps === 0) {
+                window.swapPopupShown = false;
+            }
+
             const totalNotifications = unread + incomingSwaps;
             
             const badge = document.getElementById('notifBadge');
@@ -3257,6 +3422,168 @@ service cloud.firestore {
             }
         }
 
+        // دالة لعرض جدول الملاحظات اليومي بناءً على التاريخ المختار
+        function renderDailyNotes() {
+            const dateInput = document.getElementById('dailyNotesDate');
+            if(!dateInput) return;
+            let date = dateInput.value;
+            if(!date) {
+                Swal.fire('خطأ', 'يرجى اختيار تاريخ', 'warning');
+                return;
+            }
+            // تحويل التاريخ إلى صيغة موحدة (yyyy-mm-dd)
+            const isoDate = (new Date(date)).toISOString().split('T')[0];
+            const rows = [];
+            allEmployees.forEach(emp => {
+                (emp.schedule || []).forEach(sch => {
+                    // مقارنة التاريخ بصيغة موحدة للتأكد من المطابقة
+                    const schIso = (new Date(sch.date)).toISOString().split('T')[0];
+                    if(schIso === isoDate) {
+                        rows.push({
+                            name: emp.name || 'غير معروف',
+                            nationalId: emp.nationalId || '-',
+                            status: (sch.wasSwappedOut || sch.isSwapped) ? 'تبديل' : 'أساسي',
+                            details: sch.swappedWith || '-'
+                        });
+                    }
+                });
+            });
+            let html = '<table class="table table-bordered text-center align-middle"><thead class="table-light"><tr><th>الاسم</th><th>الرقم القومي</th><th>الحالة</th><th>التفاصيل</th></tr></thead><tbody>';
+            if(rows.length > 0) {
+                rows.forEach(r => {
+                    const badgeClass = (r.status === 'أساسي') ? 'success' : 'warning';
+                    html += `<tr><td>${r.name}</td><td>${r.nationalId}</td><td><span class="badge bg-${badgeClass}">${r.status}</span></td><td>${r.details}</td></tr>`;
+                });
+            } else {
+                html += '<tr><td colspan="4">لا توجد بيانات لهذا اليوم</td></tr>';
+            }
+            html += '</tbody></table>';
+            const container = document.getElementById('dailyNotesTableArea');
+            if(container) container.innerHTML = html;
+        }
+
+        // دالة لطباعة جدول الملاحظات اليومي
+        function printDailyNotes() {
+            const tableArea = document.getElementById('dailyNotesTableArea');
+            if(!tableArea || tableArea.innerHTML.trim() === '' || tableArea.innerText.includes('لا توجد بيانات')) {
+                Swal.fire('لا يوجد بيانات للطباعة', 'يرجى اختيار تاريخ والنقر على عرض قبل الطباعة', 'warning');
+                return;
+            }
+            // إظهار التذييل عند الطباعة
+            const footer = document.getElementById('dailyNotesFooter');
+            if(footer) footer.style.display = 'block';
+            window.print();
+            // إعادة إخفاء التذييل بعد الطباعة
+            if(footer) footer.style.display = 'none';
+        }
+
+        /**
+         * استيراد ملف الملاحظات لموظفين من ملف Excel/CSV
+         * يتوقع الملف عمودين: الاسم و تواريخ الملاحظات مفصولة بفواصل.
+         * عند وجود اسم في الملف يطابق أحد الموظفين الموجودين في النظام، يتم إضافة التواريخ إلى جدول الملاحظات الخاص به.
+         */
+        function uploadNotesFile() {
+            const fileInput = document.getElementById('notesFile');
+            if(!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                Swal.fire('خطأ', 'يرجى اختيار ملف أولاً', 'warning');
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            const isCSV = file.name.toLowerCase().endsWith('.csv');
+            reader.onload = function(e) {
+                try {
+                    if(isCSV) {
+                        // Parse CSV manually
+                        const text = e.target.result;
+                        const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
+                        rows.forEach((row, idx) => {
+                            const cols = row.split(',');
+                            if(cols.length < 2) return;
+                            const name = cols[0].trim();
+                            const datesStr = cols.slice(1).join(',');
+                            processEmployeeNotesRow(name, datesStr);
+                        });
+                    } else {
+                        // Parse Excel using XLSX
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        const rows = XLSX.utils.sheet_to_json(sheet, { header:1 });
+                        rows.forEach((row, idx) => {
+                            if(!row || row.length < 2) return;
+                            // Skip header if string values like "name" or "dates"
+                            if(idx === 0) {
+                                const firstCell = String(row[0] || '').toLowerCase();
+                                if(firstCell.includes('الاسم') || firstCell.includes('name')) return;
+                            }
+                            const name = String(row[0]).trim();
+                            const datesStr = String(row[1]).trim();
+                            processEmployeeNotesRow(name, datesStr);
+                        });
+                    }
+                    Swal.fire('تم الاستيراد', 'تم تحديث الملاحظات للموظفين بنجاح', 'success');
+                } catch(err) {
+                    console.error(err);
+                    Swal.fire('خطأ', 'حدث خطأ أثناء قراءة الملف', 'error');
+                }
+            };
+            if(isCSV) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        /**
+         * معالجة صف من الملف وتحديث بيانات الموظف.
+         * @param {string} name اسم الموظف
+         * @param {string} datesStr سلسلة تواريخ مفصولة بفواصل
+         */
+        function processEmployeeNotesRow(name, datesStr) {
+            if(!name || !datesStr) return;
+            // البحث عن الموظف بالاسم
+            const emp = allEmployees.find(e => (e.name || '').trim() === name.trim());
+            if(!emp) return;
+            const dates = datesStr.split(/[،,\s]+/).filter(d => d.trim() !== '');
+            dates.forEach(date => {
+                // تأكد من صيغة التاريخ yyyy-mm-dd
+                const normalized = normalizeDate(date);
+                if(!normalized) return;
+                if(!emp.schedule) emp.schedule = [];
+                // إذا كان التاريخ موجود بالفعل، لا تضف مرة أخرى
+                const exists = emp.schedule.some(s => s.date === normalized);
+                if(!exists) {
+                    emp.schedule.push({ date: normalized, isSwapped: false, wasSwappedOut: false, swappedWith: null });
+                }
+            });
+        }
+
+        /**
+         * تحويل التاريخ إلى صيغة yyyy-mm-dd إذا كان ممكناً
+         * يقبل أشكالاً متعددة مثل dd/mm/yyyy أو dd-mm-yyyy
+         */
+        function normalizeDate(dateStr) {
+            if(!dateStr) return null;
+            // استبدال أي فواصل عربية أو فراغات بفواصل عادية
+            let d = dateStr.replace(/\s+/g, '').replace(/،/g,',');
+            // إذا كان التنسيق يتضمن شرطة أو slash
+            const parts = d.split(/[-\/]/);
+            if(parts.length === 3) {
+                let day = parts[0], month = parts[1], year = parts[2];
+                if(year.length === 2) {
+                    year = '20' + year;
+                }
+                if(day.length === 1) day = '0' + day;
+                if(month.length === 1) month = '0' + month;
+                return `${year}-${month}-${day}`;
+            }
+            // إذا كان التنسيق بالفعل yyyy-mm-dd
+            if(/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+            // لا يمكن تحويل
+            return null;
+        }
         async function showNotifications() {
             if(!currentEmpData) return;
             
@@ -3970,6 +4297,38 @@ service cloud.firestore {
 
         window.onload = function() {
             init();
+
+            // تهيئة الألوان المخصصة وحفظها في التخزين المحلي
+            function lightenColor(hex, percent) {
+                // تحويل اللون سداسي إلى قيم RGB ثم زيادة الإضاءة
+                let num = parseInt(hex.replace('#',''), 16);
+                let r = (num >> 16) + Math.round(255 * percent / 100);
+                let g = ((num >> 8) & 0x00FF) + Math.round(255 * percent / 100);
+                let b = (num & 0x0000FF) + Math.round(255 * percent / 100);
+                r = r < 255 ? r : 255;
+                g = g < 255 ? g : 255;
+                b = b < 255 ? b : 255;
+                return '#' + (0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+            function applyColor(col) {
+                const light = lightenColor(col, 30);
+                document.documentElement.style.setProperty('--primary', col);
+                document.documentElement.style.setProperty('--primary-light', light);
+            }
+            (function() {
+                const savedColor = localStorage.getItem('adminColor');
+                const cp = document.getElementById('colorPicker');
+                if(savedColor) {
+                    applyColor(savedColor);
+                    if(cp) cp.value = savedColor;
+                }
+                if(cp) {
+                    cp.addEventListener('input', function() {
+                        applyColor(this.value);
+                        localStorage.setItem('adminColor', this.value);
+                    });
+                }
+            })();
             
             setTimeout(() => {
                 document.querySelectorAll('.animate-on-load').forEach((el, index) => {
