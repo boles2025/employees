@@ -36,60 +36,29 @@
             transition: var(--transition);
         }
 
-        /* تحويل الشريط الجانبي إلى شريط علوي متجاوب وأنيق */
+        /* إعادة تخطيط لوحة التحكم إلى الوضع العمودي وإلغاء تحويلها إلى شريط علوي */
         #adminDashboardView .container-fluid > .row {
-            flex-direction: column;
+            /* اجعل اتجاه العناصر انعكاسياً ليتناسب مع وضعية العرض من اليمين إلى اليسار، بحيث يظهر الشريط الجانبي على اليمين ومحتوى لوحة الإدارة على اليسار */
+            flex-direction: row-reverse !important;
         }
-        /* الحاوية الكلية لشريط التحكم: تتحول إلى صف أفقي مع محاذاة العناصر */
-        #adminDashboardView .admin-sidebar {
-            width: 100% !important;
-            max-width: 100% !important;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            height: auto;
-            min-height: auto !important;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
+        #adminDashboardView #adminSidebar {
+            width: auto !important;
+            max-width: 240px !important;
+            height: 100vh !important;
+            /* تجنب فرض display:block هنا حتى لا يلغى تأثير فئة d-none عند الإخفاء */
+            flex-direction: column !important;
         }
-        /* قوائم التنقل داخل الشريط العلوي */
-        #adminDashboardView .admin-sidebar nav {
-            flex-grow: 1;
-            display: flex !important;
-            /* تجاوز فئة flex-column الافتراضية في Bootstrap لعرض العناصر أفقياً */
-            flex-direction: row !important;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 8px;
+        #adminDashboardView #adminSidebar nav {
+            flex-direction: column !important;
+            flex-wrap: nowrap !important;
+            width: 100%;
         }
-        #adminDashboardView .admin-sidebar nav a {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.9);
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            transition: background 0.2s ease, transform 0.2s ease;
-            text-decoration: none;
+        #adminDashboardView #adminSidebar nav a {
+            display: block !important;
+            width: 100%;
         }
-        #adminDashboardView .admin-sidebar nav a:hover,
-        #adminDashboardView .admin-sidebar nav a.active {
-            background: rgba(255, 255, 255, 0.3);
-            color: #fff;
-            transform: translateY(-2px);
-        }
-        #adminDashboardView .admin-sidebar nav a i {
-            font-size: 1.1rem;
-        }
+
+        /* تم إزالة تحويل الشريط الجانبي إلى شريط أفقي. سيظل الشريط الجانبي عمودياً ويمكن إخفاؤه أو إظهاره عبر الزر المخصص. */
         /* إخفاء رأس المعلومات في الشريط العلوي */
         #adminDashboardView .admin-sidebar .text-center.mb-4 {
             display: none;
@@ -530,6 +499,14 @@
             .admin-sidebar {
                 display: none !important;
             }
+
+            /* عرض ترويسة الملاحظات اليومية أثناء الطباعة وإخفاء صف التحكم الخاص بالتاريخ */
+            #dailyNotesHeader {
+                display: flex !important;
+            }
+            .daily-notes-control-row {
+                display: none !important;
+            }
             
             .col-md-10 {
                 width: 100% !important;
@@ -804,6 +781,69 @@
                 width: 60px;
             }
         }
+        /* إعادة ضبط تخطيط لوحة الإدارة للوضع العمودي للشريط الجانبي */
+        /* هذه القواعد توضع في نهاية ملف النمط لضمان أولوية أعلى على القواعد السابقة */
+        #adminDashboardView .container-fluid > .row {
+            flex-direction: row !important;
+        }
+        #adminDashboardView #adminSidebar {
+            /* احتفظ بارتفاع الشريط الجانبي واتجاهه ولكن لا تفرض العرض أو الظهور حتى يمكن إخفاؤه وإظهاره عبر الفئات */
+            height: 100vh !important;
+            flex-direction: column !important;
+        }
+        #adminDashboardView #adminSidebar nav {
+            flex-direction: column !important;
+            flex-wrap: nowrap !important;
+        }
+        #adminDashboardView #adminMain {
+            /* عرض القسم الرئيسي يدار بواسطة فئات الشبكة (col-md-*)، لذلك لا نفرض قيماً هنا */
+        }
+
+        /* ===== القائمة العلوية الأفقية للوحة التحكم ===== */
+        .admin-top-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10400;
+            height: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: var(--main-color, #4caf50);
+            color: #fff;
+            padding: 0 10px;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .admin-top-menu a {
+            flex: 1;
+            text-align: center;
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .admin-top-menu a .icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+        .admin-top-menu a:hover {
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        /* زر إظهار/إخفاء القائمة الأفقية */
+        #adminSidebarToggle {
+            background-color: var(--main-color, #4caf50) !important;
+            color: #fff !important;
+            border: none !important;
+        }
+
     </style>
 </head>
 <body>
@@ -815,8 +855,12 @@
 
     <div id="userInterface" style="display: none;">
         <nav class="navbar navbar-dark sticky-top animate__animated animate__fadeInDown">
-            <div class="container">
-                <a class="navbar-brand fw-bold"><i class="fas fa-clipboard-check me-2"></i> إدارة الملاحظات تصميم مهندس بولس سمير</a>
+            <div class="container d-flex justify-content-between align-items-center">
+                <!-- شعار الكلية يظهر في الجانب الأيسر مع التسمية تحته -->
+                <a class="navbar-brand d-flex flex-column align-items-start">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.yBtj4Qi_E9aiWlLY8KLDGwAAAA?rs=1&amp;pid=ImgDetMain" alt="شعار الكلية" style="height:40px;" class="mb-1">
+                    <span class="fw-bold" style="font-size:0.9rem;">كلية الطب البيطري جامعة المنيا</span>
+                </a>
                 <div class="d-flex align-items-center no-print">
                     <div class="position-relative me-3" style="cursor:pointer" onclick="showNotifications()">
                         <i class="fas fa-bell text-white fa-lg"></i>
@@ -838,10 +882,20 @@
                 <div class="mt-3">
                     <button class="btn btn-outline-primary btn-sm" onclick="showHelp()"><i class="fas fa-question-circle me-1"></i>كيفية استخدام النظام</button>
                 </div>
+
+                <!-- تعليمات للمستخدم تُعرض في الصفحة الرئيسية بدلاً من ظهورها بعد البحث بالرقم القومي -->
+                <div id="userInstructions" class="mt-4 d-none"></div>
             </div>
 
             <div id="empDashboard" class="main-card d-none animate__animated animate__fadeInUp">
                 <div id="captureArea">
+                    <!-- شعار الكلية يظهر في الجانب الأيسر مع التسمية تحته عند عرض الجدول وحفظه كصورة -->
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="me-3 text-center">
+                            <img src="https://tse2.mm.bing.net/th/id/OIP.yBtj4Qi_E9aiWlLY8KLDGwAAAA?rs=1&amp;pid=ImgDetMain" alt="شعار الكلية" style="height:80px;" class="mb-1">
+                            <div class="fw-bold" style="font-size:0.85rem;">كلية الطب البيطري جامعة المنيا</div>
+                        </div>
+                    </div>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h4 id="displayName" class="text-primary fw-bold mb-1"></h4>
@@ -852,12 +906,12 @@
                                     لتعكس عدد الأيام التي يشرف فيها الموظف على الملاحظات.
                                 -->
                                 <span class="badge bg-success" id="workDaysCount">0 عدد أيام الملاحظات</span>
-                                <span class="badge bg-warning mx-2" id="swapDaysCount">0 تبديل</span>
+                                <span class="badge bg-primary mx-2" id="swapDaysCount">0 تبديل مع</span>
                             </div>
                         </div>
                         <div class="no-print d-flex gap-2">
                             <button class="btn btn-success btn-sm" onclick="downloadSchedule()"><i class="fas fa-image me-1"></i> حفظ الجدول</button>
-                            <button class="btn btn-warning btn-sm fw-bold" onclick="openSwapRequest()"><i class="fas fa-exchange-alt me-1"></i> طلب تبديل</button>
+                            <button class="btn btn-primary btn-sm fw-bold" onclick="openSwapRequest()"><i class="fas fa-exchange-alt me-1"></i> طلب تبديل</button>
                             <button class="btn btn-outline-primary btn-sm" onclick="showEmpDetails()"><i class="fas fa-info-circle me-1"></i> التفاصيل</button>
                         </div>
                     </div>
@@ -882,6 +936,8 @@
                             <tbody id="scheduleTableBody"></tbody>
                         </table>
                     </div>
+
+                    <!-- قسم التعليمات للمستخدم تم نقله ليظهر في الصفحة الرئيسية -->
                     
                     <div class="designer-footer show-on-capture" style="display:none;">
                         <!-- تحديث النص ليعكس التصميم الجذاب والمتغير الألوان الذي طلبه المستخدم -->
@@ -893,21 +949,36 @@
     </div>
 
     <div id="adminDashboardView">
+        <!-- زر التحكم في إظهار/إخفاء القائمة الجانبية/القائمة الأفقية -->
+        <button id="adminSidebarToggle" type="button" class="btn btn-success text-white no-print position-fixed top-0 end-0 m-3 d-none" style="z-index:10500;" onclick="toggleAdminMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- قائمة الإجراءات السريعة -->
         <div class="floating-action-btn no-print animate__animated animate__fadeInUp" onclick="showQuickActions()">
             <i class="fas fa-bolt"></i>
         </div>
-        
+
+        <!-- القائمة الأفقية للوحة التحكم، تظهر عند الضغط على زر الشرط -->
+        <div id="adminTopMenu" class="admin-top-menu no-print d-none">
+            <a href="#" onclick="switchAdminTab('adm1', this)" title="الموظفين"><i class="fas fa-users icon"></i><span>الموظفين</span></a>
+            <a href="#" onclick="switchAdminTab('adm2', this)" title="التوزيع"><i class="fas fa-calendar-alt icon"></i><span>التوزيع</span></a>
+            <a href="#" onclick="switchAdminTab('adm3', this)" title="طلبات التبديل"><i class="fas fa-sync icon"></i><span>التبديل</span></a>
+            <a href="#" onclick="switchAdminTab('adm4', this)" title="الجدول العام"><i class="fas fa-file-invoice icon"></i><span>الجدول</span></a>
+            <a href="#" onclick="switchAdminTab('adm5', this)" title="الإحصائيات"><i class="fas fa-chart-pie icon"></i><span>الإحصائيات</span></a>
+            <a href="#" onclick="switchAdminTab('adm6', this)" title="الملاحظات اليومية"><i class="fas fa-book-open icon"></i><span>الملاحظات</span></a>
+            <a href="#" onclick="switchAdminTab('admInstr', this)" title="التعليمات"><i class="fas fa-info-circle icon"></i><span>التعليمات</span></a>
+            <a href="#" onclick="logoutAdmin()" class="text-warning" title="خروج"><i class="fas fa-sign-out-alt icon"></i><span>خروج</span></a>
+        </div>
+
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-2 admin-sidebar no-print">
+                <div id="adminSidebar" class="col-md-2 admin-sidebar no-print d-none">
                     <div class="text-center mb-4 pt-3">
-                        <div class="position-relative d-inline-block">
-                            <i class="fas fa-user-shield fa-3x mb-2 text-white-50"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle">
-                                <span class="visually-hidden">نشط</span>
-                            </span>
-                        </div>
-                        <h5 class="fw-bold">لوحة التحكم</h5>
+                        <!-- شعار الكلية مع التسمية تحته في لوحة الإدارة -->
+                        <img src="https://tse2.mm.bing.net/th/id/OIP.yBtj4Qi_E9aiWlLY8KLDGwAAAA?rs=1&amp;pid=ImgDetMain" alt="شعار الكلية" style="height:70px;" class="mb-2">
+                        <div class="fw-bold">كلية الطب البيطري جامعة المنيا</div>
+                        <h5 class="fw-bold mt-2">لوحة التحكم</h5>
                         <small class="text-white-50" id="adminWelcome">مرحباً بك</small>
                     </div>
                     <nav class="nav flex-column">
@@ -918,6 +989,7 @@
                         <a class="admin-nav-link" href="#" onclick="switchAdminTab('adm5', this)"><i class="fas fa-chart-pie me-2"></i> الإحصائيات</a>
                         <!-- رابط جديد لعرض جدول الملاحظات اليومية -->
                         <a class="admin-nav-link" href="#" onclick="switchAdminTab('adm6', this)"><i class="fas fa-book-open me-2"></i> الملاحظات اليومية</a>
+                        <a class="admin-nav-link" href="#" onclick="switchAdminTab('admInstr', this)"><i class="fas fa-info-circle me-2"></i> التعليمات</a>
                         <hr class="bg-white mx-3">
                         <a class="admin-nav-link text-warning" href="#" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt me-2"></i> خروج</a>
                     </nav>
@@ -933,7 +1005,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-10 p-4">
+                <div id="adminMain" class="col-md-10 p-4">
                     <div id="adminContent">
                         <div id="adm1" class="admin-tab">
                             <div class="main-card mt-0">
@@ -1072,7 +1144,8 @@
     <div id="adm6" class="admin-tab d-none">
         <div class="main-card mt-0">
             <h5 class="fw-bold mb-3"><i class="fas fa-calendar-day me-2"></i> جدول الملاحظات اليومي</h5>
-            <div class="row g-3 align-items-end mb-3">
+            <!-- صف اختيار التاريخ وأزرار العرض والطباعة، تم إضافة فئة للتحكم بالطباعة وتحسين المحاذاة -->
+            <div class="row g-3 align-items-end mb-3 justify-content-center daily-notes-control-row">
                 <div class="col-md-4">
                     <label class="form-label fw-bold">اختر اليوم</label>
                     <input type="date" id="dailyNotesDate" class="form-control">
@@ -1084,11 +1157,36 @@
                     <button class="btn btn-dark w-100" onclick="printDailyNotes()"><i class="fas fa-print me-1"></i> طباعة</button>
                 </div>
             </div>
+            <!-- ترويسة الطباعة لجدول الملاحظات اليومية، تظهر فقط عند الطباعة -->
+            <div id="dailyNotesHeader" class="d-flex align-items-center mb-3" style="display:none;">
+                <div class="me-3">
+                    <!-- شعار الكلية (يتم تحميله من الرابط المباشر) -->
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.yBtj4Qi_E9aiWlLY8KLDGwAAAA?rs=1&amp;pid=ImgDetMain" alt="شعار الكلية" style="height:80px;">
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="fw-bold mb-1">كلية الطب البيطري جامعة المنيا</h5>
+                    <!-- سيتم تحديث هذا العنصر بتاريخ اليوم المختار -->
+                    <div id="dailyNotesDateTitle" class="fw-bold"></div>
+                </div>
+            </div>
             <div id="dailyNotesTableArea" class="table-responsive"></div>
             <!-- يظهر هذا النص فقط عند الطباعة -->
             <div id="dailyNotesFooter" class="mt-4 text-center" style="display:none;">
                 تصميم مهندس بولس سمير مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
             </div>
+        </div>
+    </div>
+
+    <!-- تبويب جديد لإدارة التعليمات -->
+    <div id="admInstr" class="admin-tab d-none">
+        <div class="main-card mt-0">
+            <h5 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i> إدارة التعليمات</h5>
+            <div class="mb-3">
+                <label for="instructionInput" class="form-label fw-bold">أضف تعليمات جديدة</label>
+                <textarea id="instructionInput" class="form-control" rows="2" placeholder="أدخل تعليمات..."></textarea>
+                <button class="btn btn-primary mt-2" onclick="addInstruction()"><i class="fas fa-plus me-1"></i> إضافة</button>
+            </div>
+            <ul id="instructionList" class="list-unstyled"></ul>
         </div>
     </div>
 
@@ -1227,8 +1325,13 @@
                         }
                         
                         console.log('✅ اتصال Firestore يعمل بنجاح');
-                        
+
                         await loadData();
+
+                        // بعد تحميل البيانات، قم بمزامنة التعليمات من Firebase إلى التخزين المحلي
+                        if (typeof syncInstructionsFromFirebase === 'function') {
+                            await syncInstructionsFromFirebase();
+                        }
                         
                     } catch (firestoreError) {
                         console.error('❌ خطأ في اتصال Firestore:', firestoreError);
@@ -1675,7 +1778,7 @@ service cloud.firestore {
             
             // عرض عدد أيام الملاحظات بدلاً من "يوم عمل" بناءً على طلب المستخدم
             document.getElementById('workDaysCount').innerText = `${workDays} عدد أيام الملاحظات`;
-            document.getElementById('swapDaysCount').innerText = `${swapDays} تبديل`;
+            document.getElementById('swapDaysCount').innerText = `${swapDays} تبديل مع`;
             
             const progressPercent = allDates.length > 0 ? (workDays / allDates.length * 100) : 0;
             document.getElementById('workProgress').style.width = `${progressPercent}%`;
@@ -1693,10 +1796,8 @@ service cloud.firestore {
                     <td>${s.date}</td>
                     <td>${getDayAr(s.date)}</td>
                     <td>
-                        ${s.wasSwappedOut ? 
-                            '<span class="badge bg-danger">تبديل</span>' :
-                          s.isSwapped ? 
-                            '<span class="badge bg-warning">تبديل</span>' : 
+                        ${(s.wasSwappedOut || s.isSwapped) ? 
+                            '<span class="badge bg-primary">تبديل مع</span>' : 
                             '<span class="badge bg-success">أساسي</span>'}
                     </td>
                     <td>${s.swappedWith ? s.swappedWith : '-'}</td>
@@ -2018,10 +2119,15 @@ service cloud.firestore {
             }
             
             const scheduleHtml = `
-                <div class="schedule-for-capture">
-                    <h3 style="text-align: center; color: #000; margin-bottom: 20px;">جدول ${currentEmpData.name}</h3>
-                    <p style="text-align: center; color: #000; margin-bottom: 20px;">الرقم القومي: ${currentEmpData.nationalId}</p>
-                    <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse; color: #000;">
+                <div class="schedule-for-capture" style="color:#000;">
+                    <!-- شعار الكلية والتسمية يظهران في أعلى الجدول ناحية اليسار -->
+                    <div style="text-align:left; margin-bottom:20px;">
+                        <img src="https://tse2.mm.bing.net/th/id/OIP.yBtj4Qi_E9aiWlLY8KLDGwAAAA?rs=1&amp;pid=ImgDetMain" alt="شعار الكلية" style="height:80px; display:block;">
+                        <div style="font-weight:700; margin-top:5px;">كلية الطب البيطري جامعة المنيا</div>
+                    </div>
+                    <h3 style="text-align: center; margin-bottom: 10px;">جدول ${currentEmpData.name}</h3>
+                    <p style="text-align: center; margin-bottom: 20px;">الرقم القومي: ${currentEmpData.nationalId}</p>
+                    <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #005f73; color: white;">
                                 <th>التاريخ</th>
@@ -2031,23 +2137,23 @@ service cloud.firestore {
                             </tr>
                         </thead>
                         <tbody>
-                            ${schedule.map(s => `
-                                <tr ${s.isSwapped || s.wasSwappedOut ? 'style="background-color: #fff3cd;"' : ''}>
+                            ${schedule.map(s => {
+                                const isSwapped = s.isSwapped || s.wasSwappedOut;
+                                const statusLabel = isSwapped ? 'تبديل مع' : 'أساسي';
+                                const statusColor = isSwapped ? '#0d6efd' : '#198754';
+                                return `
+                                <tr ${isSwapped ? 'style="background-color: #e7f1fd;"' : ''}>
                                     <td style="text-align: center;">${s.date}</td>
                                     <td style="text-align: center;">${getDayAr(s.date)}</td>
                                     <td style="text-align: center;">
-                                        ${s.wasSwappedOut ? 
-                                            '<span style="background: #dc3545; color: white; padding: 3px 8px; border-radius: 4px;">تبديل</span>' :
-                                          s.isSwapped ? 
-                                            '<span style="background: #ffc107; color: black; padding: 3px 8px; border-radius: 4px;">تبديل</span>' : 
-                                            '<span style="background: #198754; color: white; padding: 3px 8px; border-radius: 4px;">أساسي</span>'}
+                                        <span style="background: ${statusColor}; color: white; padding: 3px 8px; border-radius: 4px;">${statusLabel}</span>
                                     </td>
                                     <td style="text-align: center;">${s.swappedWith ? s.swappedWith : '-'}</td>
-                                </tr>
-                            `).join('')}
+                                </tr>`;
+                            }).join('')}
                         </tbody>
                     </table>
-                    <p style="text-align: center; color: #000; margin-top: 20px; font-size: 12px;">
+                    <p style="text-align: center; margin-top: 20px; font-size: 12px;">
                         تصميم مهندس بولس سمير مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
                     </p>
                 </div>
@@ -2133,6 +2239,41 @@ service cloud.firestore {
                 switchAdminTab('adm1', document.querySelector('.admin-nav-link.active'));
                 
                 document.getElementById('adminDashboardView').classList.add('animate__fadeIn');
+
+                // إظهار زر تبديل القائمة الجانبية بعد تسجيل الدخول
+                const sidebarToggle = document.getElementById('adminSidebarToggle');
+                if(sidebarToggle) sidebarToggle.classList.remove('d-none');
+
+
+                // إخفاء القائمة الجانبية بشكل افتراضي
+                const sidebar = document.getElementById('adminSidebar');
+                const mainSection = document.getElementById('adminMain');
+                const topMenu = document.getElementById('adminTopMenu');
+                if(sidebar) {
+                    sidebar.classList.add('d-none');
+                    sidebar.style.display = 'none';
+                }
+                // ضبط العرض ليصبح 12 عموداً (عرض كامل) عند إخفاء الشريط الجانبي
+                if(mainSection) {
+                    mainSection.classList.remove('col-md-10');
+                    if(!mainSection.classList.contains('col-md-12')) {
+                        mainSection.classList.add('col-md-12');
+                    }
+                    // إعادة تعيين الهوامش العمودية للقسم الرئيسي
+                    mainSection.style.marginTop = '';
+                }
+                // إخفاء القائمة الأفقية في البداية
+                if(topMenu) {
+                    topMenu.classList.add('d-none');
+                }
+
+                // تحميل وعرض التعليمات في لوحة الإدارة وفي واجهة المستخدم
+                if(typeof renderAdminInstructions === 'function') {
+                    renderAdminInstructions();
+                }
+                if(typeof renderUserInstructions === 'function') {
+                    renderUserInstructions();
+                }
             } else {
                 Swal.fire('خطأ', 'كلمة المرور غير صحيحة', 'error');
                 document.getElementById('adminPass').value = '';
@@ -2403,8 +2544,8 @@ service cloud.firestore {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 ${s.date} (${getDayAr(s.date)})
-                                ${s.isSwapped ? `<span class="badge bg-warning ms-2">تبديل</span>` : ''}
-                                ${s.wasSwappedOut ? `<span class="badge bg-danger ms-2">تبديل</span>` : ''}
+                                ${s.isSwapped ? `<span class="badge bg-primary ms-2">تبديل مع</span>` : ''}
+                                ${s.wasSwappedOut ? `<span class="badge bg-primary ms-2">تبديل مع</span>` : ''}
                             </div>
                             ${s.swappedWith ? `<small class="text-muted">مع ${s.swappedWith}</small>` : ''}
                         </li>`;
@@ -2478,20 +2619,43 @@ service cloud.firestore {
             }).then(async result => {
                 if(result.isConfirmed) {
                     try {
+                        // إزالة الموظف من المصفوفة المحلية
                         allEmployees = allEmployees.filter(e => e.nationalId !== empId);
 
+                        // حفظ التغييرات محلياً
                         saveToLocalStorage();
 
+                        // تحديث الواجهات والإحصائيات
                         renderAdminEmps();
                         updateStats();
 
+                        // إذا كان Firebase مهيئاً، قم بحذف وثيقة الموظف من المجموعة مباشرة
+                        let remoteDeleted = false;
+                        if (firebaseInitialized && typeof db !== 'undefined') {
+                            try {
+                                await db.collection('employees').doc(empId).delete();
+                                remoteDeleted = true;
+                            } catch (err) {
+                                console.warn('⚠️ تعذر حذف الموظف من Firebase مباشرة:', err);
+                            }
+                        }
+
+                        // ثم احفظ باقي البيانات المحدثة في Firebase لخلق التزامن
                         const saved = await saveDataToFirebase();
 
-                        if (saved) {
+                        if (remoteDeleted && saved) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
                                 text: 'تم حذف الموظف بنجاح من السحابة والمحفوظات المحلية',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        } else if (saved) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تم الحذف',
+                                text: 'تم حذف الموظف من المحفوظات المحلية وتحديث السحابة',
                                 timer: 1500,
                                 showConfirmButton: false
                             });
@@ -2964,13 +3128,9 @@ service cloud.firestore {
                     
                     if(!assignment) {
                         html += `<td class="bg-light"></td>`;
-                    } else if(assignment.wasSwappedOut) {
-                        html += `<td class="bg-danger bg-opacity-25" style="font-size: 10px;" title="تبديل ${assignment.swappedWith || 'غير معروف'}">
-                            <i class="fas fa-arrow-right text-danger"></i>
-                        </td>`;
-                    } else if(assignment.isSwapped) {
-                        html += `<td class="bg-warning bg-opacity-25" style="font-size: 10px;" title="بدل من ${assignment.swappedWith || 'غير معروف'}">
-                            <i class="fas fa-exchange-alt text-warning"></i>
+                    } else if(assignment.wasSwappedOut || assignment.isSwapped) {
+                        html += `<td class="bg-primary bg-opacity-25" style="font-size: 10px;" title="تبديل مع ${assignment.swappedWith || 'غير معروف'}">
+                            <i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع
                         </td>`;
                         totalDays++;
                     } else {
@@ -3029,12 +3189,12 @@ service cloud.firestore {
                     if(!assignment) {
                         row.push('');
                     } else if(assignment.wasSwappedOut) {
-                        row.push(`تبديل ${assignment.swappedWith || 'غير معروف'}`);
+                        row.push(`تبديل مع ${assignment.swappedWith || 'غير معروف'}`);
                     } else if(assignment.isSwapped) {
                         row.push(`بدل من ${assignment.swappedWith || 'غير معروف'}`);
                         totalDays++;
                     } else {
-                        row.push('مكلف');
+                        row.push('أساسي');
                         totalDays++;
                     }
                 });
@@ -3120,12 +3280,13 @@ service cloud.firestore {
                     if (!assignment) {
                         html += `<td></td>`;
                     } else if (assignment.wasSwappedOut) {
-                        html += `<td><i class="fas fa-arrow-right text-danger"></i></td>`;
+                        html += `<td><i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع</td>`;
+                        total++;
                     } else if (assignment.isSwapped) {
-                        html += `<td><i class="fas fa-exchange-alt text-warning"></i></td>`;
+                        html += `<td><i class="fas fa-exchange-alt text-primary me-1"></i> تبديل مع</td>`;
                         total++;
                     } else {
-                        html += `<td><i class="fas fa-check text-success"></i></td>`;
+                        html += `<td><i class="fas fa-check text-success me-1"></i> أساسي</td>`;
                         total++;
                     }
                 });
@@ -3271,7 +3432,17 @@ service cloud.firestore {
                 tab.classList.add('d-none');
             });
             
-            document.getElementById(tabId).classList.remove('d-none');
+            // احصل على العنصر الخاص بالتبويب المطلوب
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                // إذا كانت هذه التبويبة خارج حاوية adminContent قم بنقلها داخل الحاوية لضمان ظهورها في المكان الصحيح
+                const adminContent = document.getElementById('adminContent');
+                if (adminContent && !adminContent.contains(tabElement)) {
+                    adminContent.appendChild(tabElement);
+                }
+                // إزالة فئة الإخفاء لعرض التبويب
+                tabElement.classList.remove('d-none');
+            }
             
             document.querySelectorAll('.admin-nav-link').forEach(link => {
                 link.classList.remove('active');
@@ -3307,11 +3478,9 @@ service cloud.firestore {
                                 <small class="text-muted ms-2">(${getDayAr(s.date)})</small>
                             </div>
                             <div>
-                                ${s.isSwapped ? 
-                                    `<span class="badge bg-warning">تبديل مع ${s.swappedWith || 'غير معروف'}</span>` : 
-                                  s.wasSwappedOut ? 
-                                    `<span class="badge bg-danger">تبديل ${s.swappedWith || 'غير معروف'}</span>` :
-                                    `<span class="badge bg-success">مكلف</span>`}
+                                ${(s.isSwapped || s.wasSwappedOut) ? 
+                                    `<span class="badge bg-primary">تبديل مع ${s.swappedWith || 'غير معروف'}</span>` :
+                                    `<span class="badge bg-success">أساسي</span>`}
                             </div>
                         </div>`;
                 });
@@ -3372,7 +3541,7 @@ service cloud.firestore {
                         
                         <div class="mb-3">
                             <h6 class="fw-bold">النوع</h6>
-                            <p>${swap.isSwapped ? 'تبديل' : 'نقل'}</p>
+                            <p>${swap.isSwapped ? 'تبديل مع' : 'نقل'}</p>
                         </div>
                         
                         <div class="mb-3">
@@ -3382,7 +3551,7 @@ service cloud.firestore {
                         
                         <div class="mt-4">
                             <p class="text-muted small"><i class="fas fa-info-circle me-1"></i>${swap.isSwapped ? 
-                                'هذا اليوم تم استبداله مع زميل آخر' : 
+                                'هذا اليوم تم تبديله مع زميل آخر' : 
                                 'هذا اليوم تم نقله إلى زميل آخر'}</p>
                         </div>
                     </div>
@@ -3392,24 +3561,63 @@ service cloud.firestore {
             });
         }
 
+        /**
+         * إظهار رسالة عائمة مختصرة باستخدام SweetAlert2. تستخدم هذه الدالة لعرض
+         * نتيجة الموافقة أو الرفض لطلبات التبديل بدون عرض بقية الإشعارات.
+         * @param {string} message نص الرسالة
+         * @param {string} type نوع الإشعار: 'success' للموافقة، 'error' للرفض
+         */
+        function showToast(message, type) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type === 'success' ? 'success' : type === 'error' ? 'error' : 'info',
+                title: message,
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
+        }
+
         function updateNotificationBadge() {
             if(!currentEmpData) return;
             
             const notifications = currentEmpData.notifications || [];
-            const unread = notifications.filter(n => !n.read).length;
+            // أولاً: اعرض رسائل الموافقة أو الرفض غير المقروءة فقط
+            const unreadResponses = notifications.filter(n => !n.read && n.type === 'swap_response');
+            if (unreadResponses.length > 0) {
+                unreadResponses.forEach(n => {
+                    const respType = (n.response === 'approved' || n.response === 'success') ? 'success' : (n.response === 'rejected' ? 'error' : 'info');
+                    showToast(n.message || 'تم تحديث حالة طلب التبديل', respType);
+                });
+                // بعد عرضها، قم بتعليمها كمقروءة وتحديث البيانات
+                const updatedNotifications = notifications.map(n => {
+                    if (!n.read && n.type === 'swap_response') {
+                        return {...n, read: true};
+                    }
+                    return n;
+                });
+                currentEmpData.notifications = updatedNotifications;
+                const empIndex = allEmployees.findIndex(e => e.nationalId === currentEmpData.nationalId);
+                if (empIndex !== -1) {
+                    allEmployees[empIndex].notifications = updatedNotifications;
+                    allEmployees[empIndex].lastUpdated = new Date().toISOString();
+                }
+                // احفظ التغييرات في Firebase
+                saveDataToFirebase();
+            }
+            
+            // حساب عدد الإشعارات غير المقروءة المتبقية (باستثناء الرسائل التي تم قراءتها للتو)
+            const unread = (currentEmpData.notifications || []).filter(n => !n.read).length;
+            // احتساب عدد طلبات التبديل الواردة
             const incomingSwaps = allEmployees.reduce((count, emp) => {
                 return count + (emp.pendingSwaps || []).filter(p => 
                     p.targetId === currentEmpData.nationalId && p.status === 'pending'
                 ).length;
             }, 0);
             
-            // عرض إشعار التبديل تلقائياً دون الحاجة للنقر على الأيقونة
-            if(incomingSwaps > 0 && !window.swapPopupShown) {
-                window.swapPopupShown = true;
-                showNotifications();
-            } else if(incomingSwaps === 0) {
-                window.swapPopupShown = false;
-            }
+            // إزالة عرض الإشعارات السابق تلقائياً؛ لن يتم فتح نافذة الإشعارات تلقائياً
+            window.swapPopupShown = false;
 
             const totalNotifications = unread + incomingSwaps;
             
@@ -3439,10 +3647,11 @@ service cloud.firestore {
                     // مقارنة التاريخ بصيغة موحدة للتأكد من المطابقة
                     const schIso = (new Date(sch.date)).toISOString().split('T')[0];
                     if(schIso === isoDate) {
+                        const swapped = sch.wasSwappedOut || sch.isSwapped;
                         rows.push({
                             name: emp.name || 'غير معروف',
                             nationalId: emp.nationalId || '-',
-                            status: (sch.wasSwappedOut || sch.isSwapped) ? 'تبديل' : 'أساسي',
+                            status: swapped ? 'تبديل مع' : 'أساسي',
                             details: sch.swappedWith || '-'
                         });
                     }
@@ -3451,7 +3660,7 @@ service cloud.firestore {
             let html = '<table class="table table-bordered text-center align-middle"><thead class="table-light"><tr><th>الاسم</th><th>الرقم القومي</th><th>الحالة</th><th>التفاصيل</th></tr></thead><tbody>';
             if(rows.length > 0) {
                 rows.forEach(r => {
-                    const badgeClass = (r.status === 'أساسي') ? 'success' : 'warning';
+                    const badgeClass = (r.status === 'أساسي') ? 'success' : 'primary';
                     html += `<tr><td>${r.name}</td><td>${r.nationalId}</td><td><span class="badge bg-${badgeClass}">${r.status}</span></td><td>${r.details}</td></tr>`;
                 });
             } else {
@@ -3460,6 +3669,14 @@ service cloud.firestore {
             html += '</tbody></table>';
             const container = document.getElementById('dailyNotesTableArea');
             if(container) container.innerHTML = html;
+
+            // تحديث عنوان التاريخ للترويسة
+            const dateParts = isoDate.split('-');
+            const displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            const dateTitle = document.getElementById('dailyNotesDateTitle');
+            if(dateTitle) {
+                dateTitle.innerText = 'تاريخ: ' + displayDate;
+            }
         }
 
         // دالة لطباعة جدول الملاحظات اليومي
@@ -3470,10 +3687,13 @@ service cloud.firestore {
                 return;
             }
             // إظهار التذييل عند الطباعة
+            const header = document.getElementById('dailyNotesHeader');
             const footer = document.getElementById('dailyNotesFooter');
+            if(header) header.style.display = 'flex';
             if(footer) footer.style.display = 'block';
             window.print();
-            // إعادة إخفاء التذييل بعد الطباعة
+            // إعادة إخفاء الترويسة والتذييل بعد الطباعة
+            if(header) header.style.display = 'none';
             if(footer) footer.style.display = 'none';
         }
 
@@ -3696,11 +3916,20 @@ service cloud.firestore {
                     allEmployees[senderIndex].schedule = allEmployees[senderIndex].schedule.map(s => 
                         s.date === request.myDate ? {...s, wasSwappedOut: true, swappedWith: currentEmpData.name} : s
                     );
-                    
                     allEmployees[senderIndex].pendingSwaps = allEmployees[senderIndex].pendingSwaps.map(r => 
                         r.requestId === requestId ? {...r, status: 'completed'} : r
                     );
-                    
+                    // إضافة إشعار للمرسل يفيد بأن طلب التبديل تمت الموافقة عليه
+                    if (!allEmployees[senderIndex].notifications) {
+                        allEmployees[senderIndex].notifications = [];
+                    }
+                    allEmployees[senderIndex].notifications.push({
+                        type: 'swap_response',
+                        response: 'approved',
+                        message: `تمت الموافقة على طلب التبديل ليوم ${request.myDate}${currentEmpData && currentEmpData.name ? ' مع ' + currentEmpData.name : ''}`,
+                        timestamp: new Date().toISOString(),
+                        read: false
+                    });
                     allEmployees[senderIndex].lastUpdated = new Date().toISOString();
                 }
                 
@@ -3794,6 +4023,18 @@ service cloud.firestore {
                 allEmployees[senderIndex].pendingSwaps = allEmployees[senderIndex].pendingSwaps.map(r => 
                     r.requestId === requestId ? {...r, status: 'rejected', rejectedAt: new Date().toISOString()} : r
                 );
+
+                // إضافة إشعار للمرسل يفيد بأن طلب التبديل تم رفضه
+                if (!allEmployees[senderIndex].notifications) {
+                    allEmployees[senderIndex].notifications = [];
+                }
+                allEmployees[senderIndex].notifications.push({
+                    type: 'swap_response',
+                    response: 'rejected',
+                    message: `تم رفض طلب التبديل ليوم ${request.myDate}${currentEmpData && currentEmpData.name ? ' بواسطة ' + currentEmpData.name : ''}`,
+                    timestamp: new Date().toISOString(),
+                    read: false
+                });
                 
                 allEmployees[senderIndex].lastUpdated = new Date().toISOString();
                 
@@ -4039,7 +4280,32 @@ service cloud.firestore {
                     allEmployees[targetIndex].schedule = newSchedule;
                     allEmployees[targetIndex].lastUpdated = new Date().toISOString();
                 }
-                
+
+                // إضافة إشعار إلى المرسل والمستهدف يفيد بأن الطلب تمت الموافقة عليه
+                // نربط كل إشعار بمعرّف الطلب لسهولة التتبع لاحقاً
+                const approvalNotif = {
+                    type: 'swap_response',
+                    response: 'approved',
+                    message: `تمت الموافقة على طلب التبديل ليوم ${request.myDate}`,
+                    timestamp: new Date().toISOString(),
+                    read: false,
+                    requestId: requestId
+                };
+                if (senderIndex !== -1) {
+                    if (!allEmployees[senderIndex].notifications) {
+                        allEmployees[senderIndex].notifications = [];
+                    }
+                    allEmployees[senderIndex].notifications.push({ ...approvalNotif });
+                    allEmployees[senderIndex].lastUpdated = new Date().toISOString();
+                }
+                if (targetIndex !== -1) {
+                    if (!allEmployees[targetIndex].notifications) {
+                        allEmployees[targetIndex].notifications = [];
+                    }
+                    allEmployees[targetIndex].notifications.push({ ...approvalNotif });
+                    allEmployees[targetIndex].lastUpdated = new Date().toISOString();
+                }
+
                 const saved = await saveDataToFirebase();
                 
                 if (saved) {
@@ -4123,7 +4389,32 @@ service cloud.firestore {
                     r.requestId === requestId ? {...r, status: 'rejected', rejectedAt: new Date().toISOString()} : r
                 );
                 
+                // إنشاء إشعار لرفض الطلب بحيث يصل للمرسل والمستهدف (إن وجد)
+                const rejectNotif = {
+                    type: 'swap_response',
+                    response: 'rejected',
+                    message: `تم رفض طلب التبديل ليوم ${request.myDate}`,
+                    timestamp: new Date().toISOString(),
+                    read: false,
+                    requestId: requestId
+                };
+                // إشعار للمرسل
+                if (!allEmployees[senderIndex].notifications) {
+                    allEmployees[senderIndex].notifications = [];
+                }
+                allEmployees[senderIndex].notifications.push({ ...rejectNotif });
                 allEmployees[senderIndex].lastUpdated = new Date().toISOString();
+                // إشعار للطرف الآخر إذا كان الطلب يتضمن هدفاً
+                if (request && request.targetId) {
+                    const targetIndex = allEmployees.findIndex(e => e.nationalId === request.targetId);
+                    if (targetIndex !== -1) {
+                        if (!allEmployees[targetIndex].notifications) {
+                            allEmployees[targetIndex].notifications = [];
+                        }
+                        allEmployees[targetIndex].notifications.push({ ...rejectNotif });
+                        allEmployees[targetIndex].lastUpdated = new Date().toISOString();
+                    }
+                }
                 
                 const saved = await saveDataToFirebase();
                 
@@ -4393,6 +4684,140 @@ service cloud.firestore {
             const footer = document.querySelector('.designer-footer');
             if(footer) footer.style.display = 'none';
         };
+        // ====== وظائف إضافية للتعليمات والقائمة الجانبية ======
+        // دالة لتبديل عرض القائمة الجانبية في لوحة التحكم
+        function toggleAdminMenu() {
+            const topMenu = document.getElementById('adminTopMenu');
+            const main = document.getElementById('adminMain');
+            if(!topMenu || !main) return;
+            if (topMenu.classList.contains('d-none')) {
+                // عرض القائمة الأفقية وإزاحة المحتوى للأسفل حتى لا تتداخل معها
+                topMenu.classList.remove('d-none');
+                main.style.marginTop = '70px';
+            } else {
+                // إخفاء القائمة الأفقية وإعادة المحتوى لمكانه الطبيعي
+                topMenu.classList.add('d-none');
+                main.style.marginTop = '';
+            }
+        }
+
+        /* ===== إدارة التعليمات ===== */
+        const instructionColors = ['#e3f2fd', '#e8f5e9', '#fff3e0', '#fce4ec', '#e0f7fa', '#f3e5f5', '#f9fbe7'];
+        /**
+         * يقوم هذا الدالة بتحميل التعليمات من التخزين المحلي.
+         * تتم مزامنة التعليمات من Firebase عند تهيئة التطبيق، لذلك يكون التخزين المحلي دائماً محدثاً.
+         */
+        function loadInstructions() {
+            try {
+                return JSON.parse(localStorage.getItem('instructions') || '[]');
+            } catch(e) {
+                return [];
+            }
+        }
+        /**
+         * حفظ مصفوفة التعليمات في التخزين المحلي ثم تحديثها في Firebase إن أمكن.
+         * نستخدم دالة غير متزامنة لتحديث Firebase ولكننا لا ننتظرها هنا حتى لا نحجب واجهة المستخدم.
+         */
+        function saveInstructions(arr) {
+            localStorage.setItem('instructions', JSON.stringify(arr));
+            // تحديث التعليمات في Firebase إذا كان متاحاً
+            if (typeof updateInstructionsInFirebase === 'function') {
+                updateInstructionsInFirebase(arr);
+            }
+        }
+
+        /**
+         * مزامنة التعليمات من Firebase إلى التخزين المحلي.
+         * يتم استدعاء هذا الدالة بعد تهيئة Firebase مباشرة لضمان توفر التعليمات.
+         */
+        async function syncInstructionsFromFirebase() {
+            if (firebaseInitialized && typeof db !== 'undefined') {
+                try {
+                    const docRef = db.collection('settings').doc('instructions');
+                    const doc = await docRef.get();
+                    if (doc.exists) {
+                        const list = doc.data().list || doc.data().instructions || [];
+                        localStorage.setItem('instructions', JSON.stringify(list));
+                    }
+                } catch (err) {
+                    console.warn('⚠️ تعذر تحميل التعليمات من Firebase:', err);
+                }
+            }
+        }
+
+        /**
+         * تحديث التعليمات في مستند Firebase. يستدعى من saveInstructions().
+         */
+        async function updateInstructionsInFirebase(arr) {
+            if (firebaseInitialized && typeof db !== 'undefined') {
+                try {
+                    await db.collection('settings').doc('instructions').set({
+                        list: arr,
+                        lastUpdated: new Date().toISOString()
+                    }, { merge: true });
+                } catch (err) {
+                    console.warn('⚠️ تعذر حفظ التعليمات في Firebase:', err);
+                }
+            }
+        }
+        function renderAdminInstructions() {
+            const list = document.getElementById('instructionList');
+            if(!list) return;
+            const instructions = loadInstructions();
+            list.innerHTML = '';
+            instructions.forEach((text, idx) => {
+                const color = instructionColors[idx % instructionColors.length];
+                const li = document.createElement('li');
+                li.className = 'instruction-item d-flex justify-content-between align-items-center mb-2 p-2 rounded';
+                li.innerHTML = `<div><span class="bullet me-2" style="background:${color};width:12px;height:12px;display:inline-block;border-radius:50%;"></span>${text}</div><button class="btn btn-sm btn-danger" onclick="deleteInstruction(${idx})"><i class="fas fa-trash"></i></button>`;
+                list.appendChild(li);
+            });
+        }
+        function renderUserInstructions() {
+            const container = document.getElementById('userInstructions');
+            if(!container) return;
+            const instructions = loadInstructions();
+            if(instructions.length === 0) {
+                container.classList.add('d-none');
+                return;
+            }
+            container.classList.remove('d-none');
+            container.innerHTML = '<h5 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i> تعليمات مهمة</h5>';
+            instructions.forEach((text, idx) => {
+                const color = instructionColors[idx % instructionColors.length];
+                const div = document.createElement('div');
+                div.className = 'instruction-point p-2 rounded mb-2';
+                div.style.backgroundColor = color;
+                div.innerText = text;
+                container.appendChild(div);
+            });
+        }
+        function addInstruction() {
+            const input = document.getElementById('instructionInput');
+            if(!input) return;
+            const text = input.value.trim();
+            if(!text) return;
+            const instructions = loadInstructions();
+            instructions.push(text);
+            saveInstructions(instructions);
+            input.value = '';
+            renderAdminInstructions();
+            renderUserInstructions();
+        }
+        function deleteInstruction(index) {
+            const instructions = loadInstructions();
+            instructions.splice(index, 1);
+            saveInstructions(instructions);
+            renderAdminInstructions();
+            renderUserInstructions();
+        }
+        // عند تحميل الصفحة، قم بمزامنة التعليمات من Firebase ثم عرضها للمستخدم
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (typeof syncInstructionsFromFirebase === 'function') {
+                await syncInstructionsFromFirebase();
+            }
+            renderUserInstructions();
+        });
     </script>
 
     <!-- شريط الشكر المتحرك - يظهر في كل الشاشات وفي أسفل التقارير عند الطباعة -->
