@@ -18,14 +18,15 @@
              * الألوان الجديدة تعطي مظهرًا جذابًا ومتغيرًا عبر العناصر المختلفة
              * كما تعمل مع التقارير والشاشات والطباعة.
              */
-            --primary: #0072b5;       /* أزرق غني */
-            --primary-light: #00a3e0; /* تركواز فاتح */
-            --secondary: #8e44ad;     /* أرجواني */
-            --secondary-dark: #6c3483;/* أرجواني غامق */
-            --accent: #e74c3c;        /* أحمر زاهي */
-            --accent-light: #f39c12;  /* برتقالي */
-            --bg: #fdf6e3;            /* بيج فاتح */
-            --bg-gradient: linear-gradient(135deg, #fdf6e3 0%, #efe8d8 100%);
+            /* تم تغيير لوحة الألوان لتكون أكثر حداثة وملائمة للعرض على الجوال والكمبيوتر */
+            --primary: #4caf50;       /* أخضر عصري */
+            --primary-light: #81c784; /* أخضر فاتح */
+            --secondary: #0288d1;     /* أزرق سماوي */
+            --secondary-dark: #0277bd;/* أزرق غامق */
+            --accent: #ff5722;        /* برتقالي زاهي */
+            --accent-light: #ffb74d;  /* برتقالي فاتح */
+            --bg: #f3f7f9;            /* رمادي فاتح */
+            --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f3f7f9 100%);
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
             --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
             --transition: all 0.4s ease;
@@ -367,12 +368,14 @@
             font-weight: bold;
             text-align: center;
         }
+
         .thank-you-banner span {
             display: inline-block;
             padding-left: 100%;
             white-space: nowrap;
             animation: marquee 15s linear infinite;
         }
+
         @keyframes marquee {
             0%   { transform: translateX(0%); }
             100% { transform: translateX(-100%); }
@@ -622,17 +625,18 @@
         }
         
         .schedule-table {
-            min-width: 800px;
+            width: 100%;
+            min-width: 700px; /* تقليل العرض الأدنى لتتسع في الشاشات الصغيرة */
         }
         
         .schedule-table th:nth-child(1),
         .schedule-table td:nth-child(1) {
-            width: 120px;
+            width: 100px; /* ترتيب اليوم ليكون أضيق */
         }
         
         .schedule-table th:nth-child(2),
         .schedule-table td:nth-child(2) {
-            width: 100px;
+            width: 120px; /* التاريخ يمكن أن يأخذ مساحة أكبر قليلاً */
         }
         
         .schedule-table th:nth-child(3),
@@ -648,6 +652,39 @@
         .schedule-table th:nth-child(5),
         .schedule-table td:nth-child(5) {
             width: 80px;
+        }
+
+        /* إضافة قواعد خاصة بالشاشات الصغيرة (الموبايل) لتصغير حجم الخط والمسافة وعرض الأعمدة */
+        @media (max-width: 576px) {
+            .schedule-table {
+                min-width: 100%;
+            }
+            .schedule-table th,
+            .schedule-table td {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.3rem;
+            }
+            /* تقليل عرض الأعمدة في الموبايل */
+            .schedule-table th:nth-child(1),
+            .schedule-table td:nth-child(1) {
+                width: 80px;
+            }
+            .schedule-table th:nth-child(2),
+            .schedule-table td:nth-child(2) {
+                width: 100px;
+            }
+            .schedule-table th:nth-child(3),
+            .schedule-table td:nth-child(3) {
+                width: 90px;
+            }
+            .schedule-table th:nth-child(4),
+            .schedule-table td:nth-child(4) {
+                width: 120px;
+            }
+            .schedule-table th:nth-child(5),
+            .schedule-table td:nth-child(5) {
+                width: 60px;
+            }
         }
     </style>
 </head>
@@ -717,9 +754,8 @@
                         <table class="table table-bordered text-center align-middle schedule-table">
                             <thead class="table-light">
                                 <tr>
-                                    <!-- ترتيب الأعمدة بحيث يظهر اليوم أولاً ثم التاريخ ثم الحالة -->
-                                    <th width="100">اليوم</th>
                                     <th width="120">التاريخ</th>
+                                    <th width="100">اليوم</th>
                                     <th width="100">الحالة</th>
                                     <th width="150">التفاصيل</th>
                                     <th width="80" class="no-print">الإجراءات</th>
@@ -731,8 +767,7 @@
                     
                     <div class="designer-footer show-on-capture" style="display:none;">
                         <!-- تحديث النص ليعكس التصميم الجذاب والمتغير الألوان الذي طلبه المستخدم -->
-                        <!-- رسالة شكر خاصة تظهر أسفل التقارير عند الطباعة -->
-                        تصميم وبرمجة مهندس بولس سمير، مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
+                        تصميم مهندس بولس سمير – تصميم جذاب بألوان متغيرة – مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري
                     </div>
                 </div>
             </div>
@@ -1498,9 +1533,8 @@ service cloud.firestore {
                 }
                 
                 row.innerHTML = `
-                    <!-- تعديل ترتيب الأعمدة: اليوم أولاً ثم التاريخ ثم الحالة -->
-                    <td>${getDayAr(s.date)}</td>
                     <td>${s.date}</td>
+                    <td>${getDayAr(s.date)}</td>
                     <td>
                         ${s.wasSwappedOut ? 
                             '<span class="badge bg-danger">تبديل</span>' :
@@ -1527,7 +1561,7 @@ service cloud.firestore {
                     <tr>
                         <td colspan="5" class="text-center py-4 text-muted">
                             <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                            <p>لا توجد أيام ملاحظة مخصصة</p>
+                            <p>لا توجد أيام ملاحظات مخصصة</p>
                         </td>
                     </tr>
                 `;
@@ -1820,7 +1854,7 @@ service cloud.firestore {
                 Swal.fire({
                     icon: 'info',
                     title: 'لا يوجد جدول',
-                    text: 'لا يوجد جدول ملاحظات لحفظه',
+                    text: 'لا يوجد جدول ملاحظة لحفظه',
                     confirmButtonText: 'حسناً'
                 });
                 return;
@@ -1857,7 +1891,7 @@ service cloud.firestore {
                         </tbody>
                     </table>
                     <p style="text-align: center; color: #000; margin-top: 20px; font-size: 12px;">
-                        تم الإنشاء في ${new Date().toLocaleDateString('ar-EG')}
+                        تصميم مهندس بولس سمير – مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا
                     </p>
                 </div>
             `;
@@ -3139,7 +3173,7 @@ service cloud.firestore {
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded">
-                                    <h6 class="fw-bold">أيام الاملاحظات</h6>
+                                    <h6 class="fw-bold">أيام الملاحظات</h6>
                                     <p class="mb-0">${workDays} يوم</p>
                                 </div>
                             </div>
@@ -3365,7 +3399,7 @@ service cloud.firestore {
                     Swal.fire({
                         icon: 'success',
                         title: 'تم التبديل',
-                        text: 'تمت عملية التبديل بنجاح وحفظها في السحابة',
+                        text: 'تمت عملية التبديل بنجاح ',
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -3373,7 +3407,7 @@ service cloud.firestore {
                     Swal.fire({
                         icon: 'success',
                         title: 'تم التبديل',
-                        text: 'تمت عملية التبديل بنجاح (محلياً فقط)',
+                        text: 'تمت عملية التبديل بنجاح ',
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -3685,7 +3719,7 @@ service cloud.firestore {
                     Swal.fire({
                         icon: 'success',
                         title: 'تمت الموافقة',
-                        text: 'تمت عملية التبديل بنجاح وحفظها في السحابة',
+                        text: 'تمت عملية التبديل بنجاح ',
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -3693,7 +3727,7 @@ service cloud.firestore {
                     Swal.fire({
                         icon: 'success',
                         title: 'تمت الموافقة',
-                        text: 'تمت عملية التبديل بنجاح (محلياً فقط)',
+                        text: 'تمت عملية التبديل بنجاح ',
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -3965,6 +3999,19 @@ service cloud.firestore {
                     checkAdmin();
                 }
             });
+
+            // تحديث الإشعارات والجدول تلقائياً كل 10 ثواني دون الحاجة لإعادة تحميل الصفحة
+            setInterval(async function() {
+                try {
+                    if (typeof currentEmpData !== 'undefined' && currentEmpData) {
+                        await loadData();
+                        renderEmpUI();
+                        updateNotificationBadge();
+                    }
+                } catch (err) {
+                    console.error('خطأ في التحديث التلقائي:', err);
+                }
+            }, 10000);
             
             setTimeout(() => {
                 const loadingOverlay = document.getElementById('loadingOverlay');
@@ -3987,11 +4034,11 @@ service cloud.firestore {
             const footer = document.querySelector('.designer-footer');
             if(footer) footer.style.display = 'none';
         };
-</script>
+    </script>
 
     <!-- شريط الشكر المتحرك - يظهر في كل الشاشات وفي أسفل التقارير عند الطباعة -->
     <div class="thank-you-banner">
-        <span>تصميم وبرمجة مهندس بولس سمير، مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا</span>
+        <span>تصميم وبرمجةللمهندس بولس سمير، مدير وحدة تكنولوجيا المعلومات بكلية الطب البيطري جامعة المنيا</span>
     </div>
 
 </body>
