@@ -784,6 +784,24 @@
             width: 80px;
         }
 
+        /*
+         * لجعل الجداول الأخرى (مثل جدول الملاحظات اليومية) متوافقة مع الهواتف
+         * نضيف قاعدة عامة لحاوية Bootstrap التي تضيف ميزة التمرير الأفقي. عند وجود أكثر من عمود،
+         * سيتم عرض شريط تمرير أفقى وسيتم الحفاظ على الأعمدة كاملة بدون التفاف.
+         */
+        .table-responsive table {
+            /* ضمان وجود عرض أدنى حتى تظهر الأعمدة كاملة */
+            min-width: 550px;
+            /* منع التفاف النص داخل الخلايا */
+            white-space: nowrap;
+        }
+        @media (max-width: 576px) {
+            .table-responsive table {
+                /* تصغير حجم الخط قليلاً في الشاشات الصغيرة */
+                font-size: 0.8rem;
+            }
+        }
+
         /* إضافة قواعد خاصة بالشاشات الصغيرة (الموبايل) لتصغير حجم الخط والمسافة وعرض الأعمدة */
         @media (max-width: 576px) {
             .schedule-table {
@@ -2828,6 +2846,10 @@ service cloud.firestore {
                             <label class="form-label">الاسم</label>
                             <input type="text" id="editEmpName" class="form-control" value="${emp.name}">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">الرقم القومي</label>
+                            <input type="text" id="editEmpId" class="form-control" value="${emp.nationalId}">
+                        </div>
                         <div class="form-check mb-3">
                             <input type="checkbox" class="form-check-input" id="editEmpFaculty" ${emp.isFaculty ? 'checked' : ''}>
                             <label class="form-check-label" for="editEmpFaculty">عضو هيئة تدريس</label>
@@ -2839,27 +2861,76 @@ service cloud.firestore {
                 cancelButtonText: 'إلغاء',
                 preConfirm: () => {
                     const newName = document.getElementById('editEmpName').value.trim();
+                    const newId = document.getElementById('editEmpId').value.trim();
                     const newIsFaculty = document.getElementById('editEmpFaculty').checked;
                     if (!newName) {
                         Swal.showValidationMessage('يرجى إدخال الاسم');
                         return false;
                     }
-                    return { newName, newIsFaculty };
+                    // التحقق من الرقم القومي
+                    if (!newId || newId.length !== 14 || !/^\d{14}$/.test(newId)) {
+                        Swal.showValidationMessage('يرجى إدخال رقم قومي صحيح مكون من 14 رقماً');
+                        return false;
+                    }
+                    // التأكد من عدم تكرار الرقم القومي عند تغييره
+                    if (newId !== emp.nationalId && allEmployees.some(e => e.nationalId === newId)) {
+                        Swal.showValidationMessage('الرقم القومي مسجل مسبقاً');
+                        return false;
+                    }
+                    return { newName, newId, newIsFaculty };
                 }
             }).then(result => {
                 if (result.isConfirmed) {
-                    const { newName, newIsFaculty } = result.value;
+                    const { newName, newId, newIsFaculty } = result.value;
+                    const oldId = emp.nationalId;
+                    // تحديث بيانات الموظف
                     emp.name = newName;
                     emp.isFaculty = newIsFaculty;
-                    // تحديث أسماء التبديلات اليدوية
+                    emp.nationalId = newId;
+                    // تحديث بيانات التبديلات اليدوية: تحديث المعرفات والأسماء
                     (manualSwaps || []).forEach(swap => {
-                        if (swap.emp1Id === emp.nationalId) {
+                        if (swap.emp1Id === oldId) {
+                            swap.emp1Id = newId;
                             swap.emp1Name = getNameWithPrefix(emp);
                         }
-                        if (swap.emp2Id === emp.nationalId) {
+                        if (swap.emp2Id === oldId) {
+                            swap.emp2Id = newId;
                             swap.emp2Name = getNameWithPrefix(emp);
                         }
                     });
+                    // تحديث schedule: تحديث حقل swappedFrom في جميع الموظفين
+                    (allEmployees || []).forEach(e => {
+                        if (e.schedule && Array.isArray(e.schedule)) {
+                            e.schedule = e.schedule.map(a => {
+                                if (a.swappedFrom === oldId) {
+                                    return { ...a, swappedFrom: newId };
+                                }
+                                return a;
+                            });
+                        }
+                    });
+                    // تحديث الطلبات المعلقة pendingSwaps: تعديل requesterId أو targetId
+                    (allEmployees || []).forEach(e => {
+                        if (e.pendingSwaps && Array.isArray(e.pendingSwaps)) {
+                            e.pendingSwaps.forEach(p => {
+                                if (p.requesterId === oldId) {
+                                    p.requesterId = newId;
+                                    // تحديث الاسم إذا كان هذا الموظف هو المرسل
+                                    p.requesterName = getNameWithPrefix(emp);
+                                }
+                                if (p.targetId === oldId) {
+                                    p.targetId = newId;
+                                    p.targetName = getNameWithPrefix(emp);
+                                }
+                            });
+                        }
+                    });
+                    // تحديث بيانات currentEmpData إذا كانت هي نفس الموظف
+                    if (typeof currentEmpData !== 'undefined' && currentEmpData && currentEmpData.nationalId === oldId) {
+                        currentEmpData.name = newName;
+                        currentEmpData.isFaculty = newIsFaculty;
+                        currentEmpData.nationalId = newId;
+                    }
                     // حفظ التغييرات
                     saveManualSwaps(manualSwaps);
                     saveDataToFirebase();
@@ -3771,18 +3842,19 @@ service cloud.firestore {
                         
                         <div class="mb-3">
                             <h6 class="fw-bold">النوع</h6>
-                            <p>${swap.isSwapped ? 'تبديل مع' : 'نقل'}</p>
+                            <!-- استبدال كلمة "نقل" بـ "تبديل مع" بشكل دائم لمزيد من الاتساق -->
+                            <p>تبديل مع</p>
                         </div>
                         
                         <div class="mb-3">
-                            <h6 class="fw-bold">${swap.isSwapped ? 'التبديل مع' : 'النقل إلى'}</h6>
+                            <!-- دائماً استخدم "التبديل مع" بدلاً من "النقل إلى" -->
+                            <h6 class="fw-bold">التبديل مع</h6>
                             <p>${swap.swappedWith || 'غير معروف'}</p>
                         </div>
                         
                         <div class="mt-4">
-                            <p class="text-muted small"><i class="fas fa-info-circle me-1"></i>${swap.isSwapped ? 
-                                'هذا اليوم تم تبديله مع زميل آخر' : 
-                                'هذا اليوم تم نقله إلى زميل آخر'}</p>
+                            <!-- عرض رسالة ثابتة بدلاً من استخدام شرط ternary للتوضيح -->
+                            <p class="text-muted small"><i class="fas fa-info-circle me-1"></i>هذا اليوم تم تبديله مع زميل آخر</p>
                         </div>
                     </div>
                 `,
